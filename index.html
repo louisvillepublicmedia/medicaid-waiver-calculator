@@ -1,30 +1,11 @@
 <!doctype html>
 <html lang='en-GB'>
 <head>
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">	
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="css/tax-calc.css">
-
-	<script>
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-24107680-1']);
-			_gaq.push(['_setDomainName', 'publicsource.org']);
-			_gaq.push(['_trackPageview']);
-			
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-		  ga('create', 'UA-24107680-1', 'auto');
-		  ga('send', 'pageview');
-		
-		</script>
+	<link rel="stylesheet" href="../css/skeleton.css">	
+	<link rel="stylesheet" href="css/style.css">
 
   <meta charset='utf-8'>
-  <title>The Allegheny County tax calculator</title>
+  <title>Medicaid Waiver Calculator</title>
 </head>
 
 <body>
@@ -36,18 +17,15 @@
   <script id='template' type='text/ractive'>
   	<div class="row">
 	  	<div class="col-lg-12 col-md-12 col-sm-12">
-		  	<h1>The Allegheny County tax calculator</h1>
-		  	<p class="lead">PublicSource created this tax calculator for Allegheny County residents to estimate how your property taxes, income taxes and sales taxes might change under <a href="http://publicsource.org/investigations/tax-calculator-how-gov-wolfs-budget-would-affect-you-allegheny-county#.VSbmUZRPLek" target="_blank">Gov. Tom Wolf's first proposed budget</a>.</p>
+		  	<h1>Medicaid Waiver Calculator</h1>
+		  	<p class="lead">WFPL created this calculator to help you understand how the Medicaid waiver will affect you based on your personal situation.</p>
 
-<p class="lead">We wanted to give you the tools to be able to make an informed opinion about Wolf's plan, free of political spin. </p>
+        <p class="lead">To use the calculator, go through each step to select your personal characteristics. Use the sliders to set your household income and property value; you'll see the dollar figures adjust in the box to the right. Then check any of the additional boxes for circumstances that might apply to you.</p>
 
-<p class="lead">To use the calculator, go through each step to select your personal characteristics. If you don't know your school district, <a href="http://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml?ref=addr&refresh=t" target="_blank">look it up here</a>. Use the sliders to set your household income and property value; you'll see the dollar figures adjust in the box to the right. Then check any of the additional boxes for goods and services you use that would be newly taxed under Wolf's plan.</p>
-
-<p class="lead">After you do that, you'll have an estimate about whether you'll pay more or less in taxes under Wolf's proposed budget. </p>
 		  </div>
 		</div>
 		<div class="row">
-		  <div class="col-lg-6 col-md-6 col-sm-6">
+		  <div class="six columns">
 		  	<!--user inputs-->
 			  <form>
 			  	<div class="form-group">
@@ -117,7 +95,7 @@
 			  			<h3>Newly taxed goods and services</h3>
 			  			<div><em>Gov. Tom Wolf proposed applying the sales tax to more goods and services. If you use those goods and services, you can choose from a few of them here and add them to your 2016-17 tax bill.</em></div>
 			  		</div>
-			  		<div class="col-lg-6 col-md-6 col-sm-12">
+			  		<div class="six columns">
 				  		<label>
 						    <input type='checkbox' checked='{{nursingOn}}'>
 						    Nursing home care
@@ -287,38 +265,17 @@
 					
 		  </div>
 		</div>
+		
 	  <div class="row thick-divider">
-	  	<div class="col-lg-12 col-md-12 col-sm-12">
-	  	
-	  		<h2>About the Data </h2>
-
-				<p>At <em>PublicSource</em>, we strive to be as transparent about how we do our work as we ask our sources to be. We want to show our work on the tax calculator so that you can review our methodology and spot any mistakes.</p>
-				
-				<p>For our property tax calculations, we obtained the median value of all homestead properties, or primary residences, for each school district and the number of homestead and farmstead properties <a href="https://www.documentcloud.org/documents/1710427-2014-homesteads-by-school-district-hm999paall-as.html" style="text-decoration:none;"><u>from Allegheny County</u></a>. We downloaded the <a href="https://www.portal.state.pa.us/portal/server.pt/community/property_tax_relief/7452/property_tax_reduction_allocations/510335" style="text-decoration:none;"><u>2014-15 state property tax reduction allocation</u></a> from the Pennsylvania Department of Education. Gov. Tom Wolf also released his <a href="http://www.portal.state.pa.us/portal/server.pt/community/education_budget/8699/schools_that_teach__2015-16_budget/539263%E2%80%8B" style="text-decoration:none;"><u>2016-17 property tax relief estimates</u></a> in an Excel format.</p>
-				
-				<p>Allegheny County publishes the millages, or property tax rates, for each school district <a href="http://www.county.allegheny.pa.us/treasurer/millsd.asp" style="text-decoration:none;"><u>online</u></a>.</p>
-				
-				<p>Income taxes in Pennsylvania are straightforward because most residents pay the same percentage of their income. Wolf has proposed raising that flat rate from 3.07 percent to 3.7 percent, which is a 20.5 percent increase.</p>
-				
-				<p>One of the policies that we incorporated into our tax calculator was Pennsylvania’s <a href="http://www.revenue.pa.gov/GeneralTaxInformation/Tax%20Types%20and%20Information/Pages/Personal%20Income%20Tax/Tax%20Forgiveness/Eligibility.aspx#.VRG-lGaR_JY" style="text-decoration:none;"><u>Tax Forgiveness Schedule</u></a>. For people with low incomes, either all or a portion of state income taxes can be forgiven. Currently, if you make under $6,500 as an individual or $32,000 as a married couple with two children, you don’t have to pay any state income taxes.</p>
-				
-				<p>For sales tax, we used Internal Revenue Service tax tables from Form 1040, Schedule A. Some people choose to itemize their deductions and for those people, the IRS publishes an <a href="http://www.irs.gov/pub/irs-pdf/i1040sca.pdf" style="text-decoration:none;"><u>optional sales tax table</u></a> for each state. The table estimates, based on your income, how much you spent in sales tax in a given year. We have adjusted their estimates, which are based on a 6 percent sales tax, to the 7 percent that <a href="https://docs.google.com/a/publicsource.org/spreadsheets/d/1CIA7j2cLlnlyci1mPvqVuOEfz4mpYdtz-5PnJUce4gM/edit?usp=sharing" style="text-decoration:none;"><u>Allegheny County residents</u></a> pay.</p>
-				
-				<p>If you speak data: <a href="https://github.com/akanik/pa-tax-calculator/blob/master/about-the-data.md">Read our full methodology</a>.</p>
-				
-				<p>If you speak code: <a href="https://github.com/akanik/pa-tax-calculator/blob/master/about-the-code.md">Read how we made the tax calculator</a>.</p>
-				<hr>
-				
-			  <p><em>Sources: Allegheny County Department of Administrative Services, Pennsylvania Department of Education, Internal Revenue Service</em></p>
-			  <p><em>Credits: This app was developed by Alexandra Kanik and Eric Holmberg of PublicSource, using <a href="http://www.ractivejs.org/" target="_blank">Ractive.js</a>. It was modeled after the tax calculator developed by Nick Malawskey and Charles Thompson of The Patriot-News, <a href="http://www.pennlive.com/politics/index.ssf/2015/03/wolf_taxes_budget_property_tax.html" target="_blank">which you can view here</a>.</em> We would also like to thank Alan Palazzolo for his help in developing this app.</p>
+  		<h2>About the Data </h2>		
+		  <p class="credit">Sources: xxxxxx<br>
+		  Calculator developed by Alexandra Kanik</p>
 	  </div>
 	  
   </script>
 
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
-  <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
- 	<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>
-
+  <script src='../../js/ractive.js'></script>
 
 
   <script>
