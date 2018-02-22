@@ -28,36 +28,50 @@
   		  	<!--user inputs-->
   			  <form>
     			  
+    			  
     			  <div class="form-group">
   			  		<div class="form-head">
-  			  			<h4>Factors that will exclude you from having to comply with these measures in order to receive Medicaid:</h4>
+                <h4>Do you currently receive Medicare benefits?</h4>
   			  		</div>
   			  		<div class="row">
-    			  		<strong>Do any of these waivers apply to you?</strong>
+    			  		<input type="radio" name="{{medicareOption}}" value="Yes"> Yes
+                <input type="radio" name="{{medicareOption}}" value="No"> No
+              </div>  
+            </div>
+    			  
+    			  <div class="form-group">
+  			  		<div class="form-head">
+                <h4>Do you currently receive Medicaid under one of these waivers?</h4>
+  			  		</div>
+  			  		<div class="row">
     			  		<select value='{{selectedMedWaiver}}'>
                   <option selected> No</option>
                   {{#waivers}}
                       <option value='{{id}}'>{{name}}</option>
                   {{/waivers}}
                 </select>
+              </div>  
+            </div>
                 
-                <br>
-                
-                <strong>Do any of these medical conditions apply to you?</strong>
+            <div class="form-group">
+  			  		<div class="form-head">
+                <h4>Do any of these medical conditions apply to you?</h4>
+              </div>
+              <div class="row">
     			  		<select value='{{selectedMedCondition}}'>
                   <option selected> No</option>
-                  {{#waivers}}
+                  {{#conditions}}
                       <option value='{{id}}'>{{name}}</option>
-                  {{/waivers}}
+                  {{/conditions}}
                 </select>
-  				  		
-  				  		<br>
-  				  		
-  							<strong>Do any of these additional factors apply to you?</strong>
-  							<label>
-  						    <input type='checkbox' checked='{{med_waiver_2}}'>
-  						    I meet Social Security disability criteria 
-  							</label>
+  				    </div>  
+            </div>		
+  				  
+  				  <div class="form-group">
+  			  		<div class="form-head">
+  							<h4>Check all that apply to you:</h4>
+  						</div>
+  						<div class="row">
   							<label>
   						    <input type='checkbox' checked='{{former_foster}}'>
   						    I am a former foster care youth and am currently under 26 years of age
@@ -65,11 +79,6 @@
   							<label>
   						    <input type='checkbox' checked='{{pregnant}}'>
   						    I am currently pregnant
-  							</label>
-  						
-  				  		<label>
-  						    <input type='checkbox' checked='{{medicare}}'>
-  						    I currently receive Medicare
   							</label>
   							<label>
   						    <input type='checkbox' checked='{{student}}'>
@@ -83,14 +92,14 @@
   				  		<h4>Select your household size:</h4>
   				  		<label>Include yourself, your spouse (if married) and anyone you'll claim as a tax dependent in 2019</label>
   				  	</div>
-  			  		<input type="range" min="0" max="20" step="1" value="{{userHousehold}}" />
+  			  		<input type="range" min="1" max="20" step="1" value="{{userHousehold}}" />
   			  		<label class="indicator">Household size = {{userHousehold}}</label>
   			  	</div>
   			  	
   			  	{{#if userHousehold > 1}}
   			  	  <div class="form-group" id="dependentSlider">
   			  		<div class="form-head">
-  				  		<h4>How many dependents do you claim:</h4>
+  				  		<h4>How many dependents do you claim?</h4>
   				  		<label>Include anyone you'll claim as a tax dependent in 2019</label>
   				  	</div>
   			  		<input type="range" min="0" max="20" step="1" value="{{userDependents}}" />
@@ -112,22 +121,13 @@
   				  	</div>
   			  		<input type="range" min="0" max="65000" step="50" value="{{userIncome}}" />
   			  		<label class="indicator">Household income = {{dollarFormat(userInput.income)}}</label>
+  			  		<label class="center"><em>{{ userInput.povertyHR }}</em></label>
   			  	</div>
   			  	  					
   			  </form>
   		  </div>
   		  
   		  <div class="one-half column results">
-  				<p><strong>Your age:</strong> {{userInput.age}}</p>
-  				<p><strong>Household size:</strong> {{userInput.household}}</p>
-  				<p><strong># of dependents:</strong> {{userInput.dependents}}</p>
-  				<p><strong>Household income:</strong> {{dollarFormat(userInput.income)}}</p>
-  				<p>
-    				<strong>Poverty status:</strong>
-    				{{ userInput.povertyHR }}
-  				</p>
-  				
-  				<div class="row thick-divider">&nbsp</div>
   				
   				<h4>New measures</h4>
   				<ul>
@@ -196,6 +196,7 @@
         ];
         
         var med_conditions = [
+          {id:'SSD', name:'I meet Social Security disability criteria'},
           {id:'MD', name:'Disabling mental disorder'},
           {id:'SUD', name:'Chronic Substance Use Disorder'},
           {id:'SCMC', name:'Serious and complex medical conditions'},
@@ -216,15 +217,18 @@
   	      data: {
   	      	userInput: {
     	      	income: 12000,
-    	      	age: 18,
     	      	household: 1,
     	      	dependents:0,
     	      	pregnant: 0,
     	      	former_foster: 0,
+    	      	med_waiver:0,
     	      	med_frail: 0,
+    	      	medicare:0,
     	      	caregiver: 0,
     	      	student: 0
   	      	},
+  	      	medicareYes: false,
+  	      	medicareNo: true,
   	      	userIncome: 12000,
   	      	userAge:18,
   	      	userHousehold:1,
@@ -243,15 +247,47 @@
   	    }); //end var ractive
     		
   	    
-  	    // Watch for changes on the School District input. When a change is detected, 
-  	    // grab the index of the user's selection so that we can set millage and 
-  	    // homestead exemption variables. Also, property tax is dependent on school district, 
-  	    // so when the school district changes, run the function that determines property tax.
+  	    // Watch for changes on the user inputs. When a change is detected, 
+  	    // compile the applicable measures and calculate the poverty level if  
+  	    // the input has to do with that calculation. 
   	    
-  	    /*ractive.observe('userAge', function(newValue, oldValue){
-  				ractive.set('userInput.age', newValue);
+  	    ractive.observe('selectedMedWaiver', function(newValue, oldValue){
+  				if(newValue != 'No'){
+    				ractive.set('userInput.med_waiver', 1);
+  				}else{
+    				ractive.set('userInput.med_waiver', 0);
+  				}
   				compile_applicable_measures()
-  	    });*/
+  	    });
+  	    
+  	    ractive.observe('selectedMedCondition', function(newValue, oldValue){
+  				if(newValue != 'No'){
+    				ractive.set('userInput.med_frail', 1);
+  				}else{
+    				ractive.set('userInput.med_frail', 0);
+  				}
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('medicareOption', function(newValue, oldValue){
+  				if(newValue == 'Yes'){
+    				ractive.set('userInput.medicare', 1);
+  				}else{
+    				ractive.set('userInput.medicare', 0);
+  				}
+  				compile_applicable_measures()
+  	    });
+  	      	    
+  	    ractive.observe('userHousehold', function(newValue, oldValue){
+  				ractive.set('userInput.household', newValue);
+  				setPovertyStatus();
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('userDependents', function(newValue, oldValue){
+  				ractive.set('userInput.caregiver', newValue);
+  				compile_applicable_measures()
+  	    });
   	    
   	    ractive.observe('userIncome', function(newValue, oldValue){
   				ractive.set('userInput.income', newValue);
@@ -264,41 +300,14 @@
   				compile_applicable_measures()
   	    });
   	    
-  	    ractive.observe('selectedMedWaiver', function(newValue, oldValue){
-    	    console.log(newValue);
-  				ractive.set('userInput.med_waiver', 1);
-  				compile_applicable_measures()
-  	    });
-  	    
-  	    ractive.observe('userHousehold', function(newValue, oldValue){
-  				ractive.set('userInput.household', newValue);
-  				setPovertyStatus();
-  				compile_applicable_measures()
-  	    });
-  	    
-  	    ractive.observe('userDependents', function(newValue, oldValue){
-  				ractive.set('userInput.dependents', newValue);
-  				compile_applicable_measures()
-  	    });
-  	    
-  	    ractive.observe('pregant', function(newValue, oldValue){
-  				ractive.set('userInput.pregnant', newValue);
-  				compile_applicable_measures()
-  	    });
-  	    
-  	    ractive.observe('med_frail', function(newValue, oldValue){
-  				ractive.set('userInput.med_frail', newValue);
-  				compile_applicable_measures();
-  	    });
-  	    
   	    ractive.observe('former_foster', function(newValue, oldValue){
   				ractive.set('userInput.former_foster', newValue);
   				compile_applicable_measures();
   	    });
   	    
-  	    ractive.observe('caregiver', function(newValue, oldValue){
-  				ractive.set('userInput.caregiver', newValue);
-  				compile_applicable_measures();
+  	    ractive.observe('pregnant', function(newValue, oldValue){
+  				ractive.set('userInput.pregnant', newValue);
+  				compile_applicable_measures()
   	    });
   	    
   	    ractive.observe('student', function(newValue, oldValue){
@@ -391,22 +400,29 @@
           cat2_list = [];
           cat3_list = [];
           cat4_list = [];
-                    
-          pregnant = ractive.get('userInput.pregnant');
-          age = ractive.get('userInput.age');
-          former_foster = ractive.get('userInput.former_foster');
+          
+          medicare = ractive.get('userInput.medicare');
+          med_waiver = ractive.get('userInput.med_waiver');
           med_frail = ractive.get('userInput.med_frail');
-          caregiver = ractive.get('userInput.caregiver');
+          former_foster = ractive.get('userInput.former_foster');
+          pregnant = ractive.get('userInput.pregnant');
           student = ractive.get('userInput.student');
+          caregiver = ractive.get('userInput.caregiver');
+          poverty54 = ractive.get('userInput.poverty54');
           poverty = ractive.get('userInput.poverty');
           poverty138 = ractive.get('userInput.poverty138');
+          
+          console.log(pregnant);
           
           
           if(poverty == 0 &&  poverty138 == 0){
             applicable_measures = ['Your income does not meet income requirements for Medicaid.']
             ractive.set('applicableMeasures', applicable_measures);
-          }else if(age > 64){
+          }else if(med_waiver > 0 || med_frail > 0){
             applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else if(medicare > 0){
+            applicable_measures = ['Medicare recipients do not qualify to receive Medicaid benefits also.']
             ractive.set('applicableMeasures', applicable_measures);
           }else{
             if(poverty == 0 && poverty138 == 1){
@@ -415,7 +431,7 @@
               cat2_list.push(waiver_measures['noretro']);
               cat3_list.push(waiver_measures['immediate']);
               cat4_list.push(waiver_measures['engage']);
-            }else if(poverty == 1){
+            }else if(poverty > 0){
               general_list.push(waiver_measures['report']);
               general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
@@ -425,7 +441,7 @@
               cat3_list.push(waiver_measures['sixtydays']);
               cat4_list.push(waiver_measures['engage'])
             };
-            if(former_foster == 1 && age < 27){
+            if(former_foster > 0){
               general_list.push(waiver_measures['report']);
               general_list.push(waiver_measures['nemt']);
               general_list.push(waiver_measures['autoenroll']);
@@ -435,7 +451,7 @@
               cat3_list.push(waiver_measures['noco']);
               cat4_list.push(waiver_measures['noengage']);
             };
-            if(pregnant == 1){
+            if(pregnant > 0){
               general_list.push(waiver_measures['report']);
               general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
@@ -444,7 +460,7 @@
               cat3_list.push(waiver_measures['noco']);
               cat4_list.push(waiver_measures['noengage']);
             };
-            if(med_frail == 1){
+            /*if(med_frail == 1){
               general_list.push(waiver_measures['report']);
               general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
@@ -453,11 +469,14 @@
               cat2_list.push(waiver_measures['noretro']);
               cat3_list.push(waiver_measures['noco']);
               cat4_list.push(waiver_measures['noengage']);
-            };
-            if(caregiver == 1 || student == 1){
+            };*/
+            if(caregiver > 0  || student == 1){
               general_list.push(waiver_measures['myrewards']);
               cat2_list.push(waiver_measures['noretro']);
               cat4_list.push(waiver_measures['noengage']);
+            };
+            if(caregiver > 0  && poverty54 > 0){
+              general_list.push(waiver_measures['nemt']);
             };
             
             filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list);
