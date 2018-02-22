@@ -8,916 +8,463 @@
   <title>Medicaid Waiver Calculator</title>
 </head>
 
-<body>
-	
-	<!-- All of the html element represented in the <script id='template'> below will render to this container -->
-  <div id='container' class='container'></div>
-
- 
-  <script id='template' type='text/ractive'>
-  	<div class="row">
-	  	<div class="col-lg-12 col-md-12 col-sm-12">
-		  	<h1>Medicaid Waiver Calculator</h1>
-		  	<p class="lead">WFPL created this calculator to help you understand how the Medicaid waiver will affect you based on your personal situation.</p>
-
+  <body>
+  	
+  	<!-- All of the html element represented in the <script id='template'> below will render to this container -->
+    <div id='container' class='container'></div>
+  
+    <script id='template' type='text/ractive'>
+    	<div class="row">
+  		  <h1>Medicaid Waiver Calculator</h1>
+  		  <p class="lead">WFPL created this calculator to help you understand how the Medicaid waiver will affect you based on your personal situation.</p>
         <p class="lead">To use the calculator, go through each step to select your personal characteristics. Use the sliders to set your household income and property value; you'll see the dollar figures adjust in the box to the right. Then check any of the additional boxes for circumstances that might apply to you.</p>
-
-		  </div>
-		</div>
-		<div class="row">
-		  <div class="six columns">
-		  	<!--user inputs-->
-			  <form>
-			  	<div class="form-group">
-			  		<div class="form-head">
-				  		<h3>Select your school district to get started:</h3>
-				  		<div><em>Your school district determines your property tax</em></div>
-				  	</div>
-			  		<select id="schoolDistrict" value="{{currentSchool}}">
-			  			<option selected disabled>Select a district</option>
-			  			{{#each schoolDistrict:i}}
-			  				<option value="{{i}}">{{name}}</option>
-			  			{{/each}}
-			  		</select>
-			  	</div>
-			  	
-			  	{{#if currentSchool}}
-			  	<div class="form-group" id="maritalStatus">
-			  		<div class="form-head">
-			  			<h3>Choose a marital status:</h3>
-			  			<div><em>Your marital status determines your estimated sales tax and your income bracket if you fall below a certain income level</em></div>
-			  		</div>
-			  		<select value="{{userMaritalStatus}}">
-			  			<option selected disabled>Select a status</option>
-			  			{{#each maritalStatus}}
-			  				<option value="{{id}}">{{name}}</option>
-			  			{{/each}}
-			  		</select>
-			  	</div>
-			  	{{/if}}
-			  	
-			  	{{#if userMaritalStatus}}
-			  	<div class="form-group" id="incomeSlider">
-			  		<div class="form-head">
-			  			<h3>What is your annual household income?</h3>
-			  			<div><em>Your income determines your income tax, your estimated sales tax and whether you qualify for tax forgiveness</em></div>
-			  		</div>
-			  		<input type="range" min="0" max="500000" step="250" value="{{userIncome}}" />
-			  		<div><strong>Your income: {{dollarFormat(userIncome)}}</strong></div>
-			  	</div>
-			  	{{/if}}
-			  	
-			  	{{#if userIncome}}
-			  	<div class="form-group">
-			  		<div class="form-head">
-			  			<h3>Are you a homeowner?</h3>
-			  			<div><em>Your homeowner status determines whether you quality for the Renters Credit in 2016-17 and whether you will have to pay property tax</em></div>
-			  		</div>
-			  		<label><input type="radio" name="{{homeOwnership}}" value="true"> Yes, I own my home.</label><br/>
-			  		<label><input type="radio" name="{{homeOwnership}}" value="false" checked> No, I rent.</label>
-			  	</div>
-			  	{{/if}}
-			  	
-			  	{{#if homeOwnership == true}}
-			  	<div class="form-group">
-			  		<div class="form-head">
-			  			<h3>What is your home's assessed property value?</h3>
-			  			<div><em>Your property's value determines your property tax</em></div>
-			  		</div>
-			  		<input type="range" min="0" steop="1000" max="1000000" value="{{userPropValue}}" />
-			  		<div><strong>Your property value: {{dollarFormat(userPropValue)}}</strong></div>
-			  	</div>
-			  	{{/if}}
-			  	
-			  
-					<div class="form-group">
-			  		<div class="form-head">
-			  			<h3>Newly taxed goods and services</h3>
-			  			<div><em>Gov. Tom Wolf proposed applying the sales tax to more goods and services. If you use those goods and services, you can choose from a few of them here and add them to your 2016-17 tax bill.</em></div>
-			  		</div>
-			  		<div class="six columns">
-				  		<label>
-						    <input type='checkbox' checked='{{nursingOn}}'>
-						    Nursing home care
-							</label>
-							 <div><em>(Average yearly cost: $62,520)</em></div>
-							<br>
-							<label>
-						    <input type='checkbox' checked='{{pitOn}}'>
-						    University of Pittsburgh
-							</label>
-							<div><em>Student fees, meal plans, textbooks (Estimated yearly cost: $6,700)</em></div>
-							<br>
-							<label>
-						    <input type='checkbox' checked='{{cmuOn}}'>
-						    Carnegie Mellon University
-							</label>
-							<div><em>Student fees, meal plans, textbooks (Estimated yearly cost: $7,356)</em></div>
-							<br>
-						</div>
-						<div class="col-lg-6 col-md-6 col-sm-12">
-							<label>
-						    <input type='checkbox' checked='{{daycareOn}}'>
-						    Daycare center
-							</label>
-							<div><em>(Average yearly cost: $10,470) </em></div>
-							<br>
-							<label>
-						    <input type='checkbox' checked='{{cableOn}}'>
-						    Cable television
-							</label>
-							<div><em>(Average monthly cost: $86)</em></div>
-						</div>
-					</div>
-			  	
-			  	
-			  	
-			  </form>
-		  </div>
-		  
-		  
-		  <div class="col-lg-6 col-md-6 col-sm-6">
-					
-				<table class="table">
-					<thead>
-						<tr>
-							<th>&nbsp;</th>
-							<th>2014-15</th>
-							<th>2016-17</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>School district</td>
-							<td>{{school.name}}</td>
-							<td>{{school.name}}</td>
-						</tr>
-						
-						<tr>
-							<td>Marital status</td>
-							<td>{{userMaritalStatus}}</td>
-							<td>{{userMaritalStatus}}</td>
-						</tr>
-					</tbody>
-					
-					<tbody>	
-						<tr>
-							<td>Income</td>
-							<td>{{dollarFormat(userIncome)}}</td>
-							<td>{{dollarFormat(userIncome)}}</td>
-						</tr>
-						
-						<tr>
-							<td>Income tax rate</td>
-							<td>3.07%</td>
-							<td>3.7%</td>
-						</tr>
-						
-						<tr>
-							<th>Income Tax</th>
-							<th>{{dollarFormat(taxes201415.incomeTax)}}</th>
-							<th>{{dollarFormat(taxes201617.incomeTax)}}</th>
-						</tr>
-					</tbody>
-						
-					{{#if homeOwnership}}
-					<tbody>
-						<tr>
-							<td>Property value</td>
-							<td>{{dollarFormat(userPropValue)}}</td>
-							<td>{{dollarFormat(userPropValue)}}</td>
-						</tr>
-						<tr>
-							<td>Millage</td>
-							<td>{{millageFormat(school.millage1415)}}</td>
-							<td>{{millageFormat(school.millage1617)}}</td>
-						</tr>
-						<tr>
-							<td>Homestead exemption</td>
-							<td>{{dollarFormat(school.homesteadEx1415)}}</td>
-							<td>{{dollarFormat(school.homesteadEx1617)}}</td>
-						</tr>
-						<tr>
-							<th>Property tax</th>
-							<th>{{dollarFormat(taxes201415.propTax)}}</th>
-							<th>{{dollarFormat(taxes201617.propTax)}}</th>
-						</tr>
-					</tbody>
-					{{else}}
-					<tbody>
-						<tr>
-							<td>Rental rebate</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(rentCredit1617)}}</td>
-						</tr>
-					</tbody>
-					{{/if}}
-					<tbody>
-						<tr>
-							<td>Sales tax rate</td>
-							<td>7%</td>
-							<td>7.6%</td>
-						</tr>	
-						<tr>
-							<th>Sales tax</th>
-							<th>{{dollarFormat(taxes201415.salesTax)}}</th>
-							<th>{{dollarFormat(taxes201617.salesTax)}}</th>
-						</tr>
-					</tbody>
-					
-					
-					<tbody>
-						<tr>
-							<td>Nursing home care</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(nursingCare)}}</td>
-						</tr>	
-						<tr>
-							<td>University of Pittsburgh</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(higherEdPit)}}</td>
-						</tr>
-						<tr>
-							<td>Carnegie Mellon</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(higherEdCMU)}}</td>
-						</tr>
-						<tr>
-							<td>Daycare center</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(daycare)}}</td>
-						</tr>
-						<tr>
-							<td>Cable television</td>
-							<td>{{dollarFormat(0)}}</td>
-							<td>{{dollarFormat(cableTV)}}</td>
-						</tr>
-					</tbody>
-					
-					<tbody>	
-						<tr class="active">
-							<th>Total tax bill</th>
-							<th>{{dollarFormat(taxes201415.incomeTax+taxes201415.propTax+taxes201415.salesTax)}}</th>
-							<th>{{dollarFormat(taxes201617.incomeTax+taxes201617.propTax+taxes201617.salesTax-rentCredit1617+nursingCare+higherEdPit+higherEdCMU+daycare+cableTV)}}</th>
-						</tr>
-					</tbody>
-				</table>
-					
-		  </div>
-		</div>
-		
-	  <div class="row thick-divider">
-  		<h2>About the Data </h2>		
-		  <p class="credit">Sources: xxxxxx<br>
-		  Calculator developed by Alexandra Kanik</p>
-	  </div>
-	  
-  </script>
-
-  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
-  <script src='../../js/ractive.js'></script>
-
-
-  <script>
-  	var pymChild;
-  	$(document).ready(function() {
+        <p class="lead">Please note that this app does not collect or store your personal information.</p>
+  		</div>
   		
-  		var maritalStatus = [{id: 'single', name: 'Single'},{id: 'married', name: 'Married'},{id: 'children', name: 'Married with children'}];
-  		var userPropValue = 0;
-  		var userIncome = 0;
-  		var incomeTaxRate1415 = 0.0307;
-  		var incomeTaxRate1617 = 0.037;
-  		var rentCredit = 0;
-  		var homeOwnership = false;
-  		var userMaritalStatus;
+  		<div id="app-begin" class="row thick-divider">&nbsp</div>
   		
-  		var nursingCare = 0;
-  		var higherEdPit = 0;
-  		var higherEdCMU = 0;
-  		var daycare = 0;
-  		var cableTV = 0;
+  		<div class="row">
+  		  <div class="one-half column">
+  		  	<!--user inputs-->
+  			  <form>
+    			  
+    			  <div class="form-group">
+  			  		<div class="form-head">
+  			  			<h4>Factors that will exclude you from having to comply with these measures in order to receive Medicaid:</h4>
+  			  		</div>
+  			  		<div class="row">
+    			  		<strong>Do any of these waivers apply to you?</strong>
+    			  		<select value='{{selectedMedWaiver}}'>
+                  <option selected> No</option>
+                  {{#waivers}}
+                      <option value='{{id}}'>{{name}}</option>
+                  {{/waivers}}
+                </select>
+                
+                <br>
+                
+                <strong>Do any of these medical conditions apply to you?</strong>
+    			  		<select value='{{selectedMedCondition}}'>
+                  <option selected> No</option>
+                  {{#waivers}}
+                      <option value='{{id}}'>{{name}}</option>
+                  {{/waivers}}
+                </select>
+  				  		
+  				  		<br>
+  				  		
+  							<strong>Do any of these additional factors apply to you?</strong>
+  							<label>
+  						    <input type='checkbox' checked='{{med_waiver_2}}'>
+  						    I meet Social Security disability criteria 
+  							</label>
+  							<label>
+  						    <input type='checkbox' checked='{{former_foster}}'>
+  						    I am a former foster care youth and am currently under 26 years of age
+  							</label>
+  							<label>
+  						    <input type='checkbox' checked='{{pregnant}}'>
+  						    I am currently pregnant
+  							</label>
+  						
+  				  		<label>
+  						    <input type='checkbox' checked='{{medicare}}'>
+  						    I currently receive Medicare
+  							</label>
+  							<label>
+  						    <input type='checkbox' checked='{{student}}'>
+  						    I am a full-time student
+  							</label>
+              </div>
+            </div>
+  			  	
+  			  	<div class="form-group" id="householdSlider">
+  			  		<div class="form-head">
+  				  		<h4>Select your household size:</h4>
+  				  		<label>Include yourself, your spouse (if married) and anyone you'll claim as a tax dependent in 2019</label>
+  				  	</div>
+  			  		<input type="range" min="0" max="20" step="1" value="{{userHousehold}}" />
+  			  		<label class="indicator">Household size = {{userHousehold}}</label>
+  			  	</div>
+  			  	
+  			  	{{#if userHousehold > 1}}
+  			  	  <div class="form-group" id="dependentSlider">
+  			  		<div class="form-head">
+  				  		<h4>How many dependents do you claim:</h4>
+  				  		<label>Include anyone you'll claim as a tax dependent in 2019</label>
+  				  	</div>
+  			  		<input type="range" min="0" max="20" step="1" value="{{userDependents}}" />
+  			  		{{#if userDependents + 1 > userHousehold}}
+  			  		  <label class="error indicator">You can't have more dependents than you have household members.</label>
+              {{else}}
+                <label class="indicator">Dependents = {{userDependents}}</label>
+              {{/if}}
+  			  	</div>
+  			  	{{/if}}
+  			  	
+  			  	<div class="form-group" id="incomeSlider">
+  			  		<div class="form-head">
+  				  		<h4>Select household income:</h4>
+  				  		<label>Use your <a href="https://turbotax.intuit.com/tax-tips/irs-tax-return/what-is-the-difference-between-agi-and-magi-on-your-taxes/L7kHckNS3" target="_blank">modified adjusted gross income here</a>.</label>
+  				  		{{#if incomeAlert}}
+  				  		  <label class="alert">{{incomeAlert}}</label>
+  				  		{{/if}}
+  				  	</div>
+  			  		<input type="range" min="0" max="65000" step="50" value="{{userIncome}}" />
+  			  		<label class="indicator">Household income = {{dollarFormat(userInput.income)}}</label>
+  			  	</div>
+  			  	  					
+  			  </form>
+  		  </div>
+  		  
+  		  <div class="one-half column results">
+  				<p><strong>Your age:</strong> {{userInput.age}}</p>
+  				<p><strong>Household size:</strong> {{userInput.household}}</p>
+  				<p><strong># of dependents:</strong> {{userInput.dependents}}</p>
+  				<p><strong>Household income:</strong> {{dollarFormat(userInput.income)}}</p>
+  				<p>
+    				<strong>Poverty status:</strong>
+    				{{ userInput.povertyHR }}
+  				</p>
+  				
+  				<div class="row thick-divider">&nbsp</div>
+  				
+  				<h4>New measures</h4>
+  				<ul>
+  				{{ #each applicableMeasures: num }}
+  				  <li>{{applicableMeasures[num]}}</li>
+  				{{/each}}
+  				</ul>
+  				
+  		  </div>
+  		  
+  		</div>
   		
-	    var ractive = new Ractive({
-	      el: 'container',	
-	      template: '#template',
-	      data: {
-	      	userMaritalStatus: userMaritalStatus,
-					maritalStatus: maritalStatus,
-	      	userPropValue: userPropValue, //dependent on homeOwner
-	      	userIncome: userIncome, 
-	      	homeOwnership: homeOwnership,
-					rentCredit1617: rentCredit,
-					
-					nursingCare: nursingCare,
-					higherEdPit: higherEdPit,
-					higherEdCMU: higherEdCMU,
-					daycare: daycare,
-					cableTV: cableTV,
-					
-					//formats
-					dollarFormat: function(num){
-						var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
-						var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-						return '$' + milNum;
-					},
-					millageFormat: function numberWithCommas(num) {
-										var millageCalc = num*1000;
-										var millageCalcDeci = parseFloat(Math.round(millageCalc*100)/100).toFixed(2);
-										return millageCalcDeci;
-									},
-					school: [],
-					schoolDistrict:[
-						{name: 'no school selected', millage1415: 0, millage1617: 0, homesteadEx1415: 0, homesteadEx1617: 0},
-						{name: 'Allegheny Valley', millage1415: 0.0203494, millage1617: 0.0203494, homesteadEx1415: 134, homesteadEx1617: 675.1894084},
-						{name: 'Avonworth', millage1415: 0.01867, millage1617: 0.01867, homesteadEx1415: 81, homesteadEx1617: 662.7289568},
-						{name: 'Baldwin-Whitehall', millage1415: 0.01761, millage1617: 0.01761, homesteadEx1415: 146, homesteadEx1617: 797.1067857},
-						{name: 'Bethel Park', millage1415: 0.0224276, millage1617: 0.0224276, homesteadEx1415: 164, homesteadEx1617: 954.1914902},
-						{name: 'Brentwood Borough', millage1415: 0.0268259, millage1617: 0.02259544936, homesteadEx1415: 253, homesteadEx1617: 965.9554602},
-						{name: 'Carlynton', millage1415: 0.019604, millage1617: 0.019604, homesteadEx1415: 171, homesteadEx1617: 938.281888},
-						{name: 'Chartiers Valley', millage1415: 0.0162175, millage1617: 0.0162175, homesteadEx1415: 103, homesteadEx1617: 625.2892295},
-						{name: 'Clairton City', millage1415: 0.058, millage1617: 0, homesteadEx1415: 303, homesteadEx1617: 0},
-						{name: 'Cornell', millage1415: 0.022746, millage1617: 0.02016577601, homesteadEx1415: 168, homesteadEx1617: 678.0742182},
-						{name: 'Deer Lakes', millage1415: 0.021953, millage1617: 0.021953, homesteadEx1415: 205, homesteadEx1617: 1138.422824},
-						{name: 'Duquesne City', millage1415: 0.0175, millage1617: 0, homesteadEx1415: 398, homesteadEx1617: 0},
-						{name: 'East Allegheny', millage1415: 0.02754, millage1617: 0.01714106196, homesteadEx1415: 246, homesteadEx1617: 567.3691507},
-						{name: 'Elizabeth Forward', millage1415: 0.0206052, millage1617: 0.01892825844, homesteadEx1415: 228, homesteadEx1617: 911.3956437},
-						{name: 'Fort Cherry', millage1415: 0.1235, millage1617: 0.1235, homesteadEx1415: 185, homesteadEx1617: 945.5856086},
-						{name: 'Fox Chapel Area', millage1415: 0.0186283, millage1617: 0.0186283, homesteadEx1415: 184, homesteadEx1617: 974.3980903},
-						{name: 'Gateway', millage1415: 0.0188919, millage1617: 0.0188919, homesteadEx1415: 174, homesteadEx1617: 1018.119055},
-						{name: 'Hampton Township', millage1415: 0.01785, millage1617: 0.01785, homesteadEx1415: 157, homesteadEx1617: 911.3850373},
-						{name: 'Highlands', millage1415: 0.0238, millage1617: 0.01764280887, homesteadEx1415: 242, homesteadEx1617: 662.487473},
-						{name: 'Keystone Oaks', millage1415: 0.01863, millage1617: 0.01863, homesteadEx1415: 151, homesteadEx1617: 737.7662884},
-						{name: 'McKeesport Area', millage1415: 0.0157, millage1617: 0, homesteadEx1415: 335, homesteadEx1617: 0},
-						{name: 'Montour', millage1415: 0.0169, millage1617: 0.0169, homesteadEx1415: 118, homesteadEx1617: 632.4851212},
-						{name: 'Moon Area', millage1415: 0.0188461, millage1617: 0.0188461, homesteadEx1415: 131, homesteadEx1617: 899.8542703},
-						{name: 'Mt Lebanon', millage1415: 0.02315, millage1617: 0.02315, homesteadEx1415: 187, homesteadEx1617: 928.9057472},
-						{name: 'North Allegheny', millage1415: 0.0174039, millage1617: 0.0174039, homesteadEx1415: 146, homesteadEx1617: 803.8877324},
-						{name: 'North Hills', millage1415: 0.01726, millage1617: 0.01726, homesteadEx1415: 125, homesteadEx1617: 708.4470697},
-						{name: 'Northgate', millage1415: 0.0247867, millage1617: 0.02209790214, homesteadEx1415: 292, homesteadEx1617: 997.7202817},
-						{name: 'Norwin', millage1415: 0.00943, millage1617: 0.009386255833, homesteadEx1415: 90, homesteadEx1617: 595.0886198},
-						{name: 'Penn Hills', millage1415: 0.024154, millage1617: 0.0220135348, homesteadEx1415: 189, homesteadEx1617: 811.1987573},
-						{name: 'Penn-Trafford', millage1415: 0.01636, millage1617: 0.01636, homesteadEx1415: 129, homesteadEx1617: 697.3526359},
-						{name: 'Pine-Richland', millage1415: 0.0192083, millage1617: 0.0192083, homesteadEx1415: 194, homesteadEx1617: 1380.907477},
-						{name: 'Pittsburgh', millage1415: 0.00984, millage1617: 0.005995332058, homesteadEx1415: 281, homesteadEx1617: 245.8086144},
-						{name: 'Plum Borough', millage1415: 0.018758, millage1617: 0.01827157825, homesteadEx1415: 210, homesteadEx1617: 1090.813222},
-						{name: 'Quaker Valley', millage1415: 0.0171548, millage1617: 0.0171548, homesteadEx1415: 183, homesteadEx1617: 1079.190102},
-						{name: 'Riverview', millage1415: 0.0224462, millage1617: 0.0224462, homesteadEx1415: 168, homesteadEx1617: 888.7411368},
-						{name: 'Shaler Area', millage1415: 0.02134, millage1617: 0.02134, homesteadEx1415: 166, homesteadEx1617: 882.9125491},
-						{name: 'South Allegheny', millage1415: 0.01724, millage1617: 0, homesteadEx1415: 216, homesteadEx1617: 0},
-						{name: 'South Fayette Township', millage1415: 0.0252126, millage1617: 0.0252126, homesteadEx1415: 153, homesteadEx1617: 1533.657389},
-						{name: 'South Park', millage1415: 0.02248, millage1617: 0.02248, homesteadEx1415: 213, homesteadEx1617: 1230.058309},
-						{name: 'Steel Valley', millage1415: 0.02131, millage1617: 0.01516444733, homesteadEx1415: 242, homesteadEx1617: 528.4809893},
-						{name: 'Sto-Rox', millage1415: 0.02319, millage1617: 0, homesteadEx1415: 352, homesteadEx1617: 0},
-						{name: 'Upper Saint Clair', millage1415: 0.0221957, millage1617: 0.0221957, homesteadEx1415: 233, homesteadEx1617: 1041.476578},
-						{name: 'West Allegheny', millage1415: 0.01851, millage1617: 0.01851, homesteadEx1415: 191, homesteadEx1617: 1177.401841},
-						{name: 'West Jefferson Hills', millage1415: 0.018592, millage1617: 0.018592, homesteadEx1415: 190, homesteadEx1617: 1106.784441},
-						{name: 'West Mifflin Area', millage1415: 0.0244965, millage1617: 0.02006520273, homesteadEx1415: 222, homesteadEx1617: 753.4483625},
-						{name: 'Wilkinsburg Borough', millage1415: 0.03263, millage1617: 0.02551716115, homesteadEx1415: 316, homesteadEx1617: 709.3770801},
-						{name: 'Woodland Hills', millage1415: 0.0224, millage1617: 0.02198642558, homesteadEx1415: 192, homesteadEx1617: 938.8203721}
-					],	
-					//year specific data      		      	
-	      	taxes201415: {
-		      	propTax: 0, //dependent on homeOwner, then schoolDistrict, then userPropValue
-				    incomeTax: 0, //dependent on maritalStatus, lowIncome and income
-				    percIncomeTax: 0,
-				    salesTax: 0,
-		      	incomeTaxRate: incomeTaxRate1415,
-		      },		      
-		      taxes201617:{
-			      propTax: 0, //dependent on homeOwner, then schoolDistrict, then userPropValue
-		      	incomeTax: 0, //dependent on maritalStatus, lowIncome and income
-		      	percIncomeTax: 0,
-				    salesTax: 0,
-		      	incomeTaxRate: incomeTaxRate1617,
-		      }//end taxes201617
-		      
-	      }// end data
-	    	    
-	    }); //end var ractive
-	   
-  		
-	    
-	    // Watch for changes on the School District input. When a change is detected, grab the index of the user's selection so that we can set millage and homestead exemption variables. Also, property tax is dependent on school district, so when the school district changes, run the function that determines property tax.
-	    ractive.observe('currentSchool', function(schoolIndex){
-				var schoolDistrict = ractive.get('schoolDistrict');
-				ractive.set({
-					school: schoolDistrict[schoolIndex],
-					currentIndex: schoolIndex
-				});
-				propTaxCalc();
-				//pymChild.sendHeight();
-	    });
-	    
-	    
-	    // Watch for changes on homeOwnership input. When the "Are you a homeowner?" is set to "Yes", make sure the homeOwnership variable is set to true (boolean). If it is set to "No", then make sure that the property value and property tax are set to 0, since no home equals no property value or tax. Also, property tax and rental rebate are dependent on homeOwnership, so if homeOwnership changes, run the functions that determine those things.
-	    ractive.observe('homeOwnership', function(o,n){
-	    	var schoolDistrict = ractive.get('schoolDistrict');
-		    if(o == 'true'){
-		    	ractive.set({
-			    	homeOwnership: true,
-		    	})
-		    }else{
-			    ractive.set({
-				   homeOwnership: false,
-				   userPropValue: 0,
-				   propTax: 0,
-			    })
-		    };
-		    propTaxCalc();
-		    checkRentCredit();
-		    //pymChild.sendHeight();
-	    });
-	    
-	    
-	    // Watch for changes on the income input. When the user selects an income, set that to the income variable. Income tax, sales tax and rental rebate are dependent on the income value, so run the functions that determine those things.
-	    ractive.observe('userIncome', function(moneys){
-		    ractive.set('userIncome', moneys);
-		    findIncomeTaxBracket1415();
-	    	findIncomeTaxBracket1617();
-	    	checkRentCredit();
-		    findSalesTax1415();
-		    findSalesTax1617();
-	    });
-	    
-	    
-	    // Watch for changes on marital status input. When status changes, set the userMaritalStatus variable. Income tax and sales tax depended on marital status as well, so run those functions if a change in value is detected.
-	    ractive.observe('userMaritalStatus', function(mStatus){
-	    	ractive.set('userMaritalStatus', mStatus);
-	    	findIncomeTaxBracket1415();
-	    	findIncomeTaxBracket1617();
-	    	findSalesTax1415();
-		    findSalesTax1617();
-		    //pymChild.sendHeight();
-	    });
-	    
-	    
-	    // Watch for changes on property value. When propterty value changes, set the userPropValue variable. If there is no user input (if the variable is undefined), set the value to 0 so that it isn't used in calculations. Property tax is determined by property value, so run that function when change is detected.
-	    ractive.observe('userPropValue', function(pv){
-		    if(pv){
-			   ractive.set('userPropValue', pv);
-		    }else{
-			   ractive.set('userPropValue', 0);
-		    };
-		    propTaxCalc();
-	    });
-	    
-	    
-	    // The following watch for changes on the Newly taxed goods checkboxes. Values are assigned to each if the user checks the box. If the box is not checked, the value is 0.
-	    ractive.observe('nursingOn', function(nc){
-		    var nursingCare = ractive.get('nursingCare');
-		    if(nc == true){
-			    nursingCare = 4752;
-		    }else{
-			    nursingCare = 0;
-		    }
-		    ractive.set('nursingCare', nursingCare);
-	    });
-	    
-	    ractive.observe('pitOn', function(hep){
-		    var higherEdPit = ractive.get('higherEdPit');
-		    if(hep == true){
-			    higherEdPit = 509;
-		    }else{
-			    higherEdPit = 0;
-		    }
-		    ractive.set('higherEdPit', higherEdPit);
-	    });
-	    
-	    ractive.observe('cmuOn', function(hec){
-		    var higherEdCMU = ractive.get('higherEdCMU');
-		    if(hec == true){
-			    higherEdCMU = 559;
-		    }else{
-			    higherEdCMU = 0;
-		    }
-		    ractive.set('higherEdCMU', higherEdCMU);
-	    });
-	    
-	    ractive.observe('daycareOn', function(dc){
-		    var daycare = ractive.get('daycare');
-		    if(dc == true){
-			    daycare = 796;
-		    }else{
-			    daycare = 0;
-		    }
-		    ractive.set('daycare', daycare);
-	    });
-	    
-	    ractive.observe('cableOn', function(cb){
-		    var cableTV = ractive.get('cableTV');
-		    if(cb == true){
-			    cableTV = 78;
-		    }else{
-			    cableTV = 0;
-		    }
-		    ractive.set('cableTV', cableTV);
-	    });
-	    
-	   
-	   // A function to calculate property tax 
-	   function propTaxCalc(){
-		   var homeOwnership = ractive.get('homeOwnership');
-		   var schoolDistrict = ractive.get('school');
-		   var userPropValue = ractive.get('userPropValue');
-		   // First, make sure the user is a homeowner and has selected a school. If they have, set the property tax variable to this calculation: property value times chosen school district millage minus school distict homestead exemption. If the user is not a homeowner or if the property tax is going to be negative, set the property tax variable to 0.
-		   if(homeOwnership == true && schoolDistrict){
-			   var propTax1415 = (userPropValue*schoolDistrict.millage1415)-schoolDistrict.homesteadEx1415;
-			   var propTax1617 = (userPropValue*schoolDistrict.millage1617)-schoolDistrict.homesteadEx1617;
-			   if(propTax1415<=0){
-				   propTax1415 = 0;
-			   }else{
-				   propTax1415 = propTax1415;
-				};
-				if(propTax1617<=0){
-				   propTax1617 = 0;
-			   }else{
-				   propTax1617 = propTax1617;
-				}		
-		   }else{
-			   var propTax1415 = 0;
-			   var propTax1617 = 0;
-		   };
-		   ractive.set('taxes201415.propTax', propTax1415);
-		   ractive.set('taxes201617.propTax', propTax1617);
-		   
-	   };
-	   
-	   // A function to find income bracket and calculate income tax for 2014-15 tax year
-	   function findIncomeTaxBracket1415(){
-		  var userIncome = ractive.get('userIncome');
-			var maritalStatus = ractive.get('userMaritalStatus');
-			var incomeTaxRate = 0.0307;
-			var percIncomeTax;
-			var incomeTax;
-			// The income bracket a user falls in depeneds on their marital status and their income level. This is not a very eloquent way to determining income bracket and in later versions of this app, this will be improved. However, once income bracket is determined, a percentage is returned. That percentage is used in the income tax calculation, which is: (income times income tax rate) times income bracket percentage.
-			if(maritalStatus && userIncome){
-				if(maritalStatus == 'single'){
-					if(userIncome >= 0 && userIncome <= 6500){
-						percIncomeTax = 0;
-					}else if(userIncome >= 6501 && userIncome <= 6750){
-						percIncomeTax = 0.1;
-					}else if(userIncome >= 6750 && userIncome <= 7000){
-						percIncomeTax = 0.2;
-					}else if(userIncome >= 7001 && userIncome <= 7250){
-						percIncomeTax = 0.3;
-					}else if(userIncome >= 7251 && userIncome <= 7500){
-						percIncomeTax = 0.4;
-					}else if(userIncome >= 7501 && userIncome <= 7750){
-						percIncomeTax = 0.5;
-					}else if(userIncome >= 7751 && userIncome <= 8000){
-						percIncomeTax = 0.6;
-					}else if(userIncome >= 8001 && userIncome <= 8250){
-						percIncomeTax = 0.7;
-					}else if(userIncome >= 8251 && userIncome <= 8500){
-						percIncomeTax = 0.8;
-					}else if(userIncome >= 8501 && userIncome <= 8750){
-						percIncomeTax = 0.9;
-					}else{
-						percIncomeTax = 1;
-					};
-				}
-				else if(maritalStatus == 'married'){
-					if(userIncome >= 0 && userIncome <= 13000){
-						percIncomeTax = 0;
-					}else if(userIncome >= 13001 && userIncome <= 13250){
-						percIncomeTax = 0.1;
-					}else if(userIncome >= 13251 && userIncome <= 13500){
-						percIncomeTax = 0.2;
-					}else if(userIncome >= 13501 && userIncome <= 13750){
-						percIncomeTax = 0.3;
-					}else if(userIncome >= 13751 && userIncome <= 14000){
-						percIncomeTax = 0.4;
-					}else if(userIncome >= 14001 && userIncome <= 14250){
-						percIncomeTax = 0.5;
-					}else if(userIncome >= 14251 && userIncome <= 14500){
-						percIncomeTax = 0.6;
-					}else if(userIncome >= 14501 && userIncome <= 14750){
-						percIncomeTax = 0.7;
-					}else if(userIncome >= 14751 && userIncome <= 15000){
-						percIncomeTax = 0.8;
-					}else if(userIncome >= 15001 && userIncome <= 15250){
-						percIncomeTax = 0.9;
-					}else{
-						percIncomeTax = 1;
-					}
-				}
-				else if(maritalStatus == 'children'){
-					if(userIncome >= 0 && userIncome <= 32000){
-						percIncomeTax = 0;
-					}else if(userIncome >= 32001 && userIncome <= 32250){
-						percIncomeTax = 0.1;
-					}else if(userIncome >= 32251 && userIncome <= 32500){
-						percIncomeTax = 0.2;
-					}else if(userIncome >= 32501 && userIncome <= 32750){
-						percIncomeTax = 0.3;
-					}else if(userIncome >= 32751 && userIncome <= 33000){
-						percIncomeTax = 0.4;
-					}else if(userIncome >= 33001 && userIncome <= 33250){
-						percIncomeTax = 0.5;
-					}else if(userIncome >= 33251 && userIncome <= 33500){
-						percIncomeTax = 0.6;
-					}else if(userIncome >= 33501 && userIncome <= 33750){
-						percIncomeTax = 0.7;
-					}else if(userIncome >= 33751 && userIncome <= 34000){
-						percIncomeTax = 0.8;
-					}else if(userIncome >= 34001 && userIncome <= 34250){
-						percIncomeTax = 0.9;
-					}else{
-						percIncomeTax = 1;
-					}
-				}
-				else{
-					percIncomeTax = 'error'; //this should never happen
-				};
-				incomeTax = (userIncome*incomeTaxRate)*percIncomeTax;
-			}else{
-				incomeTax = 0;
-				percIncomeTax = 0;
-			};
-			ractive.set('taxes201415.percIncomeTax', percIncomeTax);
-			ractive.set('taxes201415.incomeTax', incomeTax);
-	   };
-	   
-	   // A function to find income bracket and calculate income tax for 2016-17 tax year
-	   function findIncomeTaxBracket1617(){
-		  var userIncome = ractive.get('userIncome');
-			var maritalStatus = ractive.get('userMaritalStatus');
-			var incomeTaxRate = 0.037;
-			var percIncomeTax;
-			var incomeTax;
-			// The income bracket a user falls in depeneds on their marital status and their income level. This is not a very eloquent way to determining income bracket and in later versions of this app, this will be improved. However, once income bracket is determined, a percentage is returned. That percentage is used in the income tax calculation, which is: (income times income tax rate) times income bracket percentage.
-			if(maritalStatus && userIncome){
-				if(maritalStatus == 'single'){
-					if(userIncome >= 0 && userIncome <= 8700){percIncomeTax = 0;}
-					else if(userIncome >= 8701 && userIncome <= 8950){percIncomeTax = 0.1;}
-					else if(userIncome >= 8951 && userIncome <= 9200){percIncomeTax = 0.2;}
-					else if(userIncome >= 9201 && userIncome <= 9450){percIncomeTax = 0.3;}
-					else if(userIncome >= 9451 && userIncome <= 9700){percIncomeTax = 0.4;}
-					else if(userIncome >= 9701 && userIncome <= 9950){percIncomeTax = 0.5;}
-					else if(userIncome >= 9951 && userIncome <= 10200){percIncomeTax = 0.6;}
-					else if(userIncome >= 10201 && userIncome <= 10450){percIncomeTax = 0.7;}
-					else if(userIncome >= 10451 && userIncome <= 10700){percIncomeTax = 0.8;}
-					else if(userIncome >= 10701 && userIncome <= 10950){percIncomeTax = 0.9;}
-					else{percIncomeTax = 1;}
-				}else if(maritalStatus == 'married'){
-					if(userIncome >= 0 && userIncome <= 17400){percIncomeTax = 0;}
-					else if(userIncome >= 17401 && userIncome <= 17650){percIncomeTax = 0.1;}
-					else if(userIncome >= 17651 && userIncome <= 17900){percIncomeTax = 0.2;}
-					else if(userIncome >= 17901 && userIncome <= 18150){percIncomeTax = 0.3;}
-					else if(userIncome >= 18151 && userIncome <= 18400){percIncomeTax = 0.4;}
-					else if(userIncome >= 18401 && userIncome <= 18650){percIncomeTax = 0.5;}
-					else if(userIncome >= 18651 && userIncome <= 18900){percIncomeTax = 0.6;}
-					else if(userIncome >= 18901 && userIncome <= 19150){percIncomeTax = 0.7;}
-					else if(userIncome >= 19151 && userIncome <= 19400){percIncomeTax = 0.8;}
-					else if(userIncome >= 19401 && userIncome <= 19650){percIncomeTax = 0.9;}
-					else{percIncomeTax = 1;}
-				}else if(maritalStatus == 'children'){
-					if(userIncome >= 0 && userIncome <= 36400){percIncomeTax = 0;}
-					else if(userIncome >= 36401 && userIncome <= 36650){percIncomeTax = 0.1;}
-					else if(userIncome >= 36651 && userIncome <= 36900){percIncomeTax = 0.2;}
-					else if(userIncome >= 36901 && userIncome <= 37150){percIncomeTax = 0.3;}
-					else if(userIncome >= 37151 && userIncome <= 37400){percIncomeTax = 0.4;}
-					else if(userIncome >= 37401 && userIncome <= 37650){percIncomeTax = 0.5;}
-					else if(userIncome >= 37651 && userIncome <= 37900){percIncomeTax = 0.6;}
-					else if(userIncome >= 37901 && userIncome <= 38150){percIncomeTax = 0.7;}
-					else if(userIncome >= 38151 && userIncome <= 38400){percIncomeTax = 0.8;}
-					else if(userIncome >= 38401 && userIncome <= 38650){percIncomeTax = 0.9;}
-					else{percIncomeTax = 1;}
-				}else{
-					percIncomeTax = 'error'; //this should never happen
-				};
-				incomeTax = (userIncome*incomeTaxRate)*percIncomeTax;
-			}else{
-				incomeTax = 0;
-				percIncomeTax = 0;
-			};
-			ractive.set('taxes201617.percIncomeTax', percIncomeTax);
-			ractive.set('taxes201617.incomeTax', incomeTax);
-	   };
+  	  <div class="row thick-divider">&nbsp</div>
+      
+      <div class="row">
+    		<h3>About the Data </h3>		
+  		  <p class="credit">Sources: xxxxxx<br>
+  		  Calculator developed by Alexandra Kanik</p>
+  	  </div>
+  	  
+    </script>
+  
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
+    <script src='../../js/ractive.js'></script>
+  
+  
+    <script>
+    	$(document).ready(function() {
+      	
+      	$(window).scroll(function(){
+          var currentScreenPosition  = $(document).scrollTop();
+          var appScreenPosition = $('#app-begin').offset().top;
+          if (currentScreenPosition > appScreenPosition) {
+            $( '.results' ).addClass( 'fixed' );
+          }else{
+            $( '.results' ).removeClass( 'fixed' );
+          };
+        });
+    		
+    		var waiver_measures = {
+      		'nemt':'Access Non-Emergency Medical Transportation',
+      		'retro':'Retroactive eligibility',
+          'noretro':'No retroactive eligibility',
+          'noco':'No copays or premiums',
+          'choiceco':'Choice to pay copays instead of premiums',
+          'sixtydays':'60 days to make premium payment',
+          'immediate':'Premium payment due before coverage can start',
+          'noengage':'No community engagment',
+          'engage':'Community engagment required',
+          'autoenroll':'Auto-enrolled in Medicaid',
+          'benefits':'Keep vision and other benefits',
+          'myrewards':'Can earn points toward MyRewards program',
+          'myrewardsgym':'Can earn points toward MyRewards program for gym benefits, if they pay a premium',
+          'report':'Manditory reporting for changes to Medicaid eligibility'
+          };
+          
+        var med_waivers = [
+          {id:'HC', name:'Home and Community-Based Waiver - 1915(c)'},
+          {id:'MP', name:'Michelle P Waiver - 1915(c)'},
+          {id:'ABI', name:'Acquired Brain Injury - 1915(c)'},
+          {id:'ABILT', name:'Acquired Brain Injury, Long Term Care - 1915(c)'},
+          {id:'M', name:'Model Waiver II - 1915(c)'},
+          {id:'SCL', name:'Supports for Community Living - 1915(c)'},
+          {id:'NF', name:'Nursing Facility and ICF/MR Residents'},
+          {id:'QMB', name:'Qualified Medicare Beneficiaries'}
+        ];
+        
+        var med_conditions = [
+          {id:'MD', name:'Disabling mental disorder'},
+          {id:'SUD', name:'Chronic Substance Use Disorder'},
+          {id:'SCMC', name:'Serious and complex medical conditions'},
+          {id:'IDD', name:'Physical, intellectual or developmental disabilities'}
+        ];
+          
+        var applicable_measures = [];          
+        var general_list = [];
+        var cat2_list = [];
+        var cat3_list = [];
+        var cat4_list = [];
+        var filtered_list = [];
+                
+    		
+  	    var ractive = new Ractive({
+  	      el: 'container',	
+  	      template: '#template',
+  	      data: {
+  	      	userInput: {
+    	      	income: 12000,
+    	      	age: 18,
+    	      	household: 1,
+    	      	dependents:0,
+    	      	pregnant: 0,
+    	      	former_foster: 0,
+    	      	med_frail: 0,
+    	      	caregiver: 0,
+    	      	student: 0
+  	      	},
+  	      	userIncome: 12000,
+  	      	userAge:18,
+  	      	userHousehold:1,
+  	      	userDependents:0,
+  	      	applicableMeasures:waiver_measures,
+  	      	waivers:med_waivers,
+  	      	conditions:med_conditions,
+  					
+  					//formats
+  					dollarFormat: function(num){
+  						var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
+  						var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  						return '$' + milNum;
+  					}					
+  	      }// end data
+  	    }); //end var ractive
+    		
+  	    
+  	    // Watch for changes on the School District input. When a change is detected, 
+  	    // grab the index of the user's selection so that we can set millage and 
+  	    // homestead exemption variables. Also, property tax is dependent on school district, 
+  	    // so when the school district changes, run the function that determines property tax.
+  	    
+  	    /*ractive.observe('userAge', function(newValue, oldValue){
+  				ractive.set('userInput.age', newValue);
+  				compile_applicable_measures()
+  	    });*/
+  	    
+  	    ractive.observe('userIncome', function(newValue, oldValue){
+  				ractive.set('userInput.income', newValue);
+  				if(newValue > 60000){
+    				var incomeAlert = 'If you make more than $60,000, you would have to have a family size \
+    				  of more than 12 to qualify for Medicaid.';
+    				ractive.set('incomeAlert', incomeAlert)
+  				};
+  				setPovertyStatus();
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('selectedMedWaiver', function(newValue, oldValue){
+    	    console.log(newValue);
+  				ractive.set('userInput.med_waiver', 1);
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('userHousehold', function(newValue, oldValue){
+  				ractive.set('userInput.household', newValue);
+  				setPovertyStatus();
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('userDependents', function(newValue, oldValue){
+  				ractive.set('userInput.dependents', newValue);
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('pregant', function(newValue, oldValue){
+  				ractive.set('userInput.pregnant', newValue);
+  				compile_applicable_measures()
+  	    });
+  	    
+  	    ractive.observe('med_frail', function(newValue, oldValue){
+  				ractive.set('userInput.med_frail', newValue);
+  				compile_applicable_measures();
+  	    });
+  	    
+  	    ractive.observe('former_foster', function(newValue, oldValue){
+  				ractive.set('userInput.former_foster', newValue);
+  				compile_applicable_measures();
+  	    });
+  	    
+  	    ractive.observe('caregiver', function(newValue, oldValue){
+  				ractive.set('userInput.caregiver', newValue);
+  				compile_applicable_measures();
+  	    });
+  	    
+  	    ractive.observe('student', function(newValue, oldValue){
+  				ractive.set('userInput.student', newValue);
+  				compile_applicable_measures();
+  	    });
+  	      	    
+  	    function getPovertyLevel(household){
+    	    if(household == 1) return 12140;
+    	    if(household == 2) return 16460;
+    	    if(household == 3) return 20780;
+    	    if(household == 4) return 25100;
+    	    if(household == 5) return 29420;
+    	    if(household == 6) return 33740;
+    	    if(household == 7) return 38060;
+    	    if(household == 8) return 42380;
+    	    if(household == 9) return 46700;
+    	    if(household == 10) return 51020;
+    	    if(household == 11) return 55340;
+    	    if(household == 12) return 59660;
+  	    }
+  	    
+  	    function setPovertyStatus(){
+    	    var income = ractive.get('userInput.income');
+    	    var household = ractive.get('userInput.household');
+    	    var povertyLevel = getPovertyLevel(household);
+    	    var poverty138Level = povertyLevel*1.38;
+    	    var poverty54Level = povertyLevel*.54;
+    	    
+    	    if(income <= poverty54Level){
+      	    ractive.set('userInput.povertyHR','Your income is at or below 54% of the poverty level.');
+      	    ractive.set('userInput.poverty54', 1);
+      	    ractive.set('userInput.poverty138', 1);
+      	    ractive.set('userInput.poverty', 1);
+    	    }else if(income <= povertyLevel && income > poverty54Level){
+      	    ractive.set('userInput.povertyHR','Your income is at or below 100% of the poverty level.');
+      	    ractive.set('userInput.poverty54', 0);
+      	    ractive.set('userInput.poverty138', 1);
+      	    ractive.set('userInput.poverty', 1);
+          }else if(income > povertyLevel && income <= poverty138Level){
+            ractive.set('userInput.povertyHR','Your income is at or below 138% of the poverty level.')
+            ractive.set('userInput.poverty54', 0);
+            ractive.set('userInput.poverty138', 1);
+      	    ractive.set('userInput.poverty', 0);
+          }else{
+            ractive.set('userInput.povertyHR','Your income does not meet income requirements for Medicaid.')
+            ractive.set('userInput.poverty54', 0);
+            ractive.set('userInput.poverty138', 0);
+      	    ractive.set('userInput.poverty', 0);
+          }
+    	  }
+    	  
+    	  function filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list){
+          //for some category lists, values conflict
+          //this is where we set the priority for those values
+          
+          filtered_list = [];
+          
+          if(cat2_list.length > 1){
+            cat2_list = ['Retroactive eligibility']
+          };
+          
+          if(cat3_list.length > 1 && cat3_list.indexOf('No copays or premiums')>-1){
+            cat3_list = ['No copays or premiums']
+          }else if(cat3_list.indexOf('Premium payment due before coverage can start')>-1 && cat3_list.indexOf('60 days to make premium payment')>-1){
+            indexprepay = cat3_list.indexOf('Premium payment due before coverage can start');
+            cat3_list.splice(indexprepay,1);
+          };
+          
+          if(cat4_list.length > 1){
+            cat4_list = ['No community engagment']
+          };
+          
+          filtered_list = applicable_measures.concat(general_list, cat2_list, cat3_list, cat4_list);
+          unique_filtered_list = filtered_list.reduce(function(a,b){
+            if(a.indexOf(b) == -1){
+              a.push(b);
+            }
+            return a;
+          }, []);
+          
+          ractive.set('applicableMeasures', unique_filtered_list);
+        };
 
-	   
-	   // A function to find an estimated total sales tax paid in 2014-15 
-	   function findSalesTax1415(){
-		   var userIncome = ractive.get('userIncome');
-			 var maritalStatus = ractive.get('userMaritalStatus');
-			 var salesTax;
-			 // The salesTax values are based on the Internal Revenue Service tax tables from Form 1040, Schedule A. Very simple, if your income falls between the two numbers, it will assign you an estimated sales tax for the tax year. Again, this is an ineloquent way of executing this code. It will be fixed in later versions of this app.
-			 if(maritalStatus && userIncome){
-				 if(maritalStatus == 'single'){
-					 if(userIncome >= 0 && userIncome <= 19999){
-					 	salesTax = 226.3333333;
-					 }else if(userIncome >= 20000 && userIncome <= 29999){
-					 	salesTax = 372.1666667;
-					 }else if(userIncome >= 30000 && userIncome <= 39999){
-					 	salesTax = 452.6666667;
-					 }else if(userIncome >= 40000 && userIncome <= 49999){
-					 	salesTax = 523.8333333;
-					 }else if(userIncome >= 50000 && userIncome <= 59999){
-					 	salesTax = 589.1666667;
-					 }else if(userIncome >= 60000 && userIncome <= 69999){
-					 	salesTax = 649.8333333;
-					 }else if(userIncome >= 70000 && userIncome <= 79999){
-					 	salesTax = 705.8333333;
-					 }else if(userIncome >= 80000 && userIncome <= 89999){
-					 	salesTax = 758.3333333;
-					 }else if(userIncome >= 90000 && userIncome <= 99999){
-					 	salesTax = 808.5;
-					 }else if(userIncome >= 100000 && userIncome <= 119999){
-					 	salesTax = 877.3333333;
-					 }else if(userIncome >= 120000 && userIncome <= 139999){
-					 	salesTax = 967.1666667;
-					 }else if(userIncome >= 140000 && userIncome <= 159999){
-					 	salesTax = 1051.166667;
-					 }else if(userIncome >= 160000 && userIncome <= 179999){
-					 	salesTax = 1130.5;
-					 }else if(userIncome >= 180000 && userIncome <= 199999){
-					 	salesTax = 1206.333333;
-					 }else if(userIncome >= 200000 && userIncome <= 224999){
-					 	salesTax = 1286.833333;
-					 }else if(userIncome >= 225000 && userIncome <= 249999){
-					 	salesTax = 1373.166667;
-					 }else if(userIncome >= 250000 && userIncome <= 274999){
-					 	salesTax = 1456;
-					 }else if(userIncome >= 275000 && userIncome <= 299999){
-					 	salesTax = 1535.333333;
-					 }else{
-					 	salesTax = 2019.5;
-					 }
-					}else if(maritalStatus == 'married'){
-					 	if(userIncome >= 0 && userIncome <= 19999){
-					 		salesTax = 245;
-					 	}else if(userIncome >= 20000 && userIncome <= 29999){
-					 		salesTax = 403.6666667;
-					 	}else if(userIncome >= 30000 && userIncome <= 39999){
-					 		salesTax = 491.1666667;
-					 	}else if(userIncome >= 40000 && userIncome <= 49999){
-					 		salesTax = 569.3333333;
-					 	}else if(userIncome >= 50000 && userIncome <= 59999){
-					 		salesTax = 639.3333333;
-					 	}else if(userIncome >= 60000 && userIncome <= 69999){
-					 		salesTax = 705.8333333;
-					 	}else if(userIncome >= 70000 && userIncome <= 79999){
-					 		salesTax = 766.5;
-					 	}else if(userIncome >= 80000 && userIncome <= 89999){
-					 		salesTax = 824.8333333;
-					 	}else if(userIncome >= 90000 && userIncome <= 99999){
-					 		salesTax = 879.6666667;
-					 	}else if(userIncome >= 100000 && userIncome <= 119999){
-					 		salesTax = 953.1666667;
-					 	}else if(userIncome >= 120000 && userIncome <= 139999){
-					 		salesTax = 1051.166667;
-					 	}else if(userIncome >= 140000 && userIncome <= 159999){
-					 		salesTax = 1143.333333;
-					 	}else if(userIncome >= 160000 && userIncome <= 179999){
-					 		salesTax = 1229.666667;
-					 	}else if(userIncome >= 180000 && userIncome <= 199999){
-					 		salesTax = 1312.5;
-					 	}else if(userIncome >= 200000 && userIncome <= 224999){
-					 		salesTax = 1400;
-					 	}else if(userIncome >= 225000 && userIncome <= 249999){
-					 		salesTax = 1494.5;
-					 	}else if(userIncome >= 250000 && userIncome <= 274999){
-					 		salesTax = 1584.333333;
-					 	}else if(userIncome >= 275000 && userIncome <= 299999){
-					 		salesTax = 1670.666667;
-					 	}else{
-					 		salesTax = 2200.333333;
-					 	}
-					}else if(maritalStatus == 'children'){
-				 		if(userIncome >= 0 && userIncome <= 19999){salesTax = 266;}
-						else if(userIncome >= 20000 && userIncome <= 29999){salesTax = 438.6666667;}
-						else if(userIncome >= 30000 && userIncome <= 39999){salesTax = 534.3333333;}
-						else if(userIncome >= 40000 && userIncome <= 49999){salesTax = 618.3333333;}
-						else if(userIncome >= 50000 && userIncome <= 59999){salesTax = 696.5;}
-						else if(userIncome >= 60000 && userIncome <= 69999){salesTax = 767.6666667;}
-						else if(userIncome >= 70000 && userIncome <= 79999){salesTax = 834.1666667;}
-						else if(userIncome >= 80000 && userIncome <= 89999){salesTax = 898.3333333;}
-						else if(userIncome >= 90000 && userIncome <= 99999){salesTax = 957.8333333;}
-						else if(userIncome >= 100000 && userIncome <= 119999){salesTax = 1038.333333;}
-						else if(userIncome >= 120000 && userIncome <= 139999){salesTax = 1145.666667;}
-						else if(userIncome >= 140000 && userIncome <= 159999){salesTax = 1246;}
-						else if(userIncome >= 160000 && userIncome <= 179999){salesTax = 1341.666667;}
-						else if(userIncome >= 180000 && userIncome <= 199999){salesTax = 1431.5;}
-						else if(userIncome >= 200000 && userIncome <= 224999){salesTax = 1527.166667;}
-						else if(userIncome >= 225000 && userIncome <= 249999){salesTax = 1629.833333;}
-						else if(userIncome >= 250000 && userIncome <= 274999){salesTax = 1729;}
-						else if(userIncome >= 275000 && userIncome <= 299999){salesTax = 1823.5;}
-						else{salesTax = 2402.166667;}
-				 }else{
-					 salesTax = 999999999999; //this should never happen, because if it's not set, the parent if statment will fail
-				 };
-			 }else{
-				 salesTax = 0;
-			 };
-			 ractive.set('taxes201415.salesTax', salesTax);
-	   };
-	   
-	   
-	   // A function to determine estimated sales tax for the tax year 2016-17.
-	   function findSalesTax1617(){
-		   var userIncome = ractive.get('userIncome');
-			 var maritalStatus = ractive.get('userMaritalStatus');
-			 var salesTax;
-			 // The salesTax values are based on the Internal Revenue Service tax tables from Form 1040, Schedule A. Very simple, if your income falls between the two numbers, it will assign you an estimated sales tax for the tax year. Again, this is an ineloquent way of executing this code. It will be fixed in later versions of this app.
-			 if(maritalStatus && userIncome){
-				 if(maritalStatus == 'single'){
-				 	if(userIncome >= 0 && userIncome <= 19999){salesTax = 245.7333333;}
-					else if(userIncome >= 20000 && userIncome <= 29999){salesTax = 404.0666667;}
-					else if(userIncome >= 30000 && userIncome <= 39999){salesTax = 491.4666667;}
-					else if(userIncome >= 40000 && userIncome <= 49999){salesTax = 568.7333333;}
-					else if(userIncome >= 50000 && userIncome <= 59999){salesTax = 639.6666667;}
-					else if(userIncome >= 60000 && userIncome <= 69999){salesTax = 705.5333333;}
-					else if(userIncome >= 70000 && userIncome <= 79999){salesTax = 766.3333333;}
-					else if(userIncome >= 80000 && userIncome <= 89999){salesTax = 823.3333333;}
-					else if(userIncome >= 90000 && userIncome <= 99999){salesTax = 877.8;}
-					else if(userIncome >= 100000 && userIncome <= 119999){salesTax = 952.5333333;}
-					else if(userIncome >= 120000 && userIncome <= 139999){salesTax = 1050.066667;}
-					else if(userIncome >= 140000 && userIncome <= 159999){salesTax = 1141.266667;}
-					else if(userIncome >= 160000 && userIncome <= 179999){salesTax = 1227.4;}
-					else if(userIncome >= 180000 && userIncome <= 199999){salesTax = 1309.733333;}
-					else if(userIncome >= 200000 && userIncome <= 224999){salesTax = 1397.133333;}
-					else if(userIncome >= 225000 && userIncome <= 249999){salesTax = 1490.866667;}
-					else if(userIncome >= 250000 && userIncome <= 274999){salesTax = 1580.8;}
-					else if(userIncome >= 275000 && userIncome <= 299999){salesTax = 1666.933333;}
-					else{salesTax = 2192.6;}			 
-				}else if(maritalStatus == 'married'){
-				 	if(userIncome >= 0 && userIncome <= 19999){salesTax = 266;}
-					else if(userIncome >= 20000 && userIncome <= 29999){salesTax = 438.2666667;}
-					else if(userIncome >= 30000 && userIncome <= 39999){salesTax = 533.2666667;}
-					else if(userIncome >= 40000 && userIncome <= 49999){salesTax = 618.1333333;}
-					else if(userIncome >= 50000 && userIncome <= 59999){salesTax = 694.1333333;}
-					else if(userIncome >= 60000 && userIncome <= 69999){salesTax = 766.3333333;}
-					else if(userIncome >= 70000 && userIncome <= 79999){salesTax = 832.2;}
-					else if(userIncome >= 80000 && userIncome <= 89999){salesTax = 895.5333333;}
-					else if(userIncome >= 90000 && userIncome <= 99999){salesTax = 955.0666667;}
-					else if(userIncome >= 100000 && userIncome <= 119999){salesTax = 1034.866667;}
-					else if(userIncome >= 120000 && userIncome <= 139999){salesTax = 1141.266667;}
-					else if(userIncome >= 140000 && userIncome <= 159999){salesTax = 1241.333333;}
-					else if(userIncome >= 160000 && userIncome <= 179999){salesTax = 1335.066667;}
-					else if(userIncome >= 180000 && userIncome <= 199999){salesTax = 1425;}
-					else if(userIncome >= 200000 && userIncome <= 224999){salesTax = 1520;}
-					else if(userIncome >= 225000 && userIncome <= 249999){salesTax = 1622.6;}
-					else if(userIncome >= 250000 && userIncome <= 274999){salesTax = 1720.133333;}
-					else if(userIncome >= 275000 && userIncome <= 299999){salesTax = 1813.866667;}
-					else{salesTax = 2388.933333;}
-				 }else if(maritalStatus == 'children'){
-			 		if(userIncome >= 0 && userIncome <= 19999){salesTax = 288.8;}
-					else if(userIncome >= 20000 && userIncome <= 29999){salesTax = 476.2666667;}
-					else if(userIncome >= 30000 && userIncome <= 39999){salesTax = 580.1333333;}
-					else if(userIncome >= 40000 && userIncome <= 49999){salesTax = 671.3333333;}
-					else if(userIncome >= 50000 && userIncome <= 59999){salesTax = 756.2;}
-					else if(userIncome >= 60000 && userIncome <= 69999){salesTax = 833.4666667;}
-					else if(userIncome >= 70000 && userIncome <= 79999){salesTax = 905.6666667;}
-					else if(userIncome >= 80000 && userIncome <= 89999){salesTax = 975.3333333;}
-					else if(userIncome >= 90000 && userIncome <= 99999){salesTax = 1039.933333;}
-					else if(userIncome >= 100000 && userIncome <= 119999){salesTax = 1127.333333;}
-					else if(userIncome >= 120000 && userIncome <= 139999){salesTax = 1243.866667;}
-					else if(userIncome >= 140000 && userIncome <= 159999){salesTax = 1352.8;}
-					else if(userIncome >= 160000 && userIncome <= 179999){salesTax = 1456.666667;}
-					else if(userIncome >= 180000 && userIncome <= 199999){salesTax = 1554.2;}
-					else if(userIncome >= 200000 && userIncome <= 224999){salesTax = 1658.066667;}
-					else if(userIncome >= 225000 && userIncome <= 249999){salesTax = 1769.533333;}
-					else if(userIncome >= 250000 && userIncome <= 274999){salesTax = 1877.2;}
-					else if(userIncome >= 275000 && userIncome <= 299999){salesTax = 1979.8;}
-					else{salesTax = 2608.066667;}
-				 }else{
-					 salesTax = 'error'; //this should never happen, because if it's not set, the parent if statment will fail
-				 };
-			 }else{
-				 salesTax = 0;
-			 };
-			 ractive.set('taxes201617.salesTax', salesTax);
-	   };
-	   
-	   
-	   // A function to check if the user is eligable for a renter rebate.
-	   function checkRentCredit(){
-		   var userIncome = ractive.get('userIncome');
-		   var homeOwnership = ractive.get('homeOwnership');
-		   var rentCredit;
-		   // You can only get the renter rebate if you don't own a home and if your income is less than $50,000. If those conditions are met, then set the rentCredit variable to $500. This rebate is not available for 2014-15 tax year.
-		   if(homeOwnership == false && userIncome <= 50000){
-			   rentCredit = 500;
-		   }else{
-			   rentCredit = 0;
-		   }
-		  ractive.set('rentCredit1617', rentCredit);
-	   };
-	   
-	}); //end $(document).ready
-			
-	</script>
-	<script src="js/pym.js"></script>
-<script type="text/javascript">
-(function() {
-	var $ = jQuery,
-	pymChild = new pym.Child({polling:500});
-	$(document).ready(function(){
-	       $(window).load(function(){
-	         //pymChild.sendHeightToParent();
-	       });
-	});
-})();
-</script>
-</body>
+        
+        function compile_applicable_measures(){
+          applicable_measures = [];
+          
+          general_list = [];
+          cat2_list = [];
+          cat3_list = [];
+          cat4_list = [];
+                    
+          pregnant = ractive.get('userInput.pregnant');
+          age = ractive.get('userInput.age');
+          former_foster = ractive.get('userInput.former_foster');
+          med_frail = ractive.get('userInput.med_frail');
+          caregiver = ractive.get('userInput.caregiver');
+          student = ractive.get('userInput.student');
+          poverty = ractive.get('userInput.poverty');
+          poverty138 = ractive.get('userInput.poverty138');
+          
+          
+          if(poverty == 0 &&  poverty138 == 0){
+            applicable_measures = ['Your income does not meet income requirements for Medicaid.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else if(age > 64){
+            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else{
+            if(poverty == 0 && poverty138 == 1){
+              general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['myrewardsgym']);
+              cat2_list.push(waiver_measures['noretro']);
+              cat3_list.push(waiver_measures['immediate']);
+              cat4_list.push(waiver_measures['engage']);
+            }else if(poverty == 1){
+              general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['autoenroll']);
+              general_list.push(waiver_measures['benefits']);
+              general_list.push(waiver_measures['myrewardsgym']);
+              cat2_list.push(waiver_measures['noretro']);
+              cat3_list.push(waiver_measures['choiceco']);
+              cat3_list.push(waiver_measures['sixtydays']);
+              cat4_list.push(waiver_measures['engage'])
+            };
+            if(former_foster == 1 && age < 27){
+              general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['nemt']);
+              general_list.push(waiver_measures['autoenroll']);
+              general_list.push(waiver_measures['benefits']);
+              general_list.push(waiver_measures['myrewardsgym']);
+              cat2_list.push(waiver_measures['retro']);
+              cat3_list.push(waiver_measures['noco']);
+              cat4_list.push(waiver_measures['noengage']);
+            };
+            if(pregnant == 1){
+              general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['autoenroll']);
+              general_list.push(waiver_measures['benefits']);
+              general_list.push(waiver_measures['nemt']);
+              cat2_list.push(waiver_measures['retro']);
+              cat3_list.push(waiver_measures['noco']);
+              cat4_list.push(waiver_measures['noengage']);
+            };
+            if(med_frail == 1){
+              general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['autoenroll']);
+              general_list.push(waiver_measures['benefits']);
+              general_list.push(waiver_measures['myrewardsgym']);
+              general_list.push(waiver_measures['nemt']);
+              cat2_list.push(waiver_measures['noretro']);
+              cat3_list.push(waiver_measures['noco']);
+              cat4_list.push(waiver_measures['noengage']);
+            };
+            if(caregiver == 1 || student == 1){
+              general_list.push(waiver_measures['myrewards']);
+              cat2_list.push(waiver_measures['noretro']);
+              cat4_list.push(waiver_measures['noengage']);
+            };
+            
+            filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list);
+          };
+        };  	   
+  	}); //end $(document).ready
+  			
+  	</script>
+  </body>
 </html>
