@@ -84,6 +84,11 @@
   						    <input type='checkbox' checked='{{student}}'>
   						    I am a full-time student
   							</label>
+  							<label>
+  						    <input type='checkbox' checked='{{food}}'>
+  						    I receive TANF and/or SNAP
+  							</label>
+  							
               </div>
             </div>
   			  	
@@ -177,7 +182,6 @@
           'immediate':'Premium payment due before coverage can start',
           'noengage':'No community engagment',
           'engage':'Community engagment required',
-          'autoenroll':'Auto-enrolled in Medicaid',
           'benefits':'Keep vision and other benefits',
           'myrewards':'Can earn points toward MyRewards program',
           'myrewardsgym':'Can earn points toward MyRewards program for gym benefits, if they pay a premium',
@@ -225,12 +229,12 @@
     	      	med_frail: 0,
     	      	medicare:0,
     	      	caregiver: 0,
-    	      	student: 0
+    	      	student: 0,
+    	      	food:0
   	      	},
   	      	medicareYes: false,
   	      	medicareNo: true,
   	      	userIncome: 12000,
-  	      	userAge:18,
   	      	userHousehold:1,
   	      	userDependents:0,
   	      	applicableMeasures:waiver_measures,
@@ -314,6 +318,11 @@
   				ractive.set('userInput.student', newValue);
   				compile_applicable_measures();
   	    });
+  	    
+  	    ractive.observe('food', function(newValue, oldValue){
+  				ractive.set('userInput.food', newValue);
+  				compile_applicable_measures();
+  	    });
   	      	    
   	    function getPovertyLevel(household){
     	    if(household == 1) return 12140;
@@ -391,9 +400,112 @@
           
           ractive.set('applicableMeasures', unique_filtered_list);
         };
-
         
         function compile_applicable_measures(){
+          applicable_measures = [];
+          
+          general_list = [];
+          cat2_list = [];
+          cat3_list = [];
+          cat4_list = [];
+          
+          medicare = ractive.get('userInput.medicare');
+          med_waiver = ractive.get('userInput.med_waiver');
+          med_frail = ractive.get('userInput.med_frail');
+          former_foster = ractive.get('userInput.former_foster');
+          pregnant = ractive.get('userInput.pregnant');
+          student = ractive.get('userInput.student');
+          food = ractive.get('userInput.food');
+          caregiver = ractive.get('userInput.caregiver');
+          poverty54 = ractive.get('userInput.poverty54');
+          poverty = ractive.get('userInput.poverty');
+          poverty138 = ractive.get('userInput.poverty138');          
+          
+          function commEngage(){
+            if(former_foster > 0 || pregnant > 0 || caregiver > 0 || med_frail > 0 || student > 0 || food > 0){
+              return 'You are exempt from the 80-hour community engagement requirement.'
+            }else{
+              return 'Complete 80 hours of community service per month.'
+            }
+          };
+          
+          function premium(){
+            if(former_foster > 0 || pregnant > 0 || med_frail > 0){
+              return 'You will not need to pay premiums or copays.'
+            }else{
+              return 'Pay a monthly premium based on your household income.'
+            }
+          };
+          
+          function lockOut(){
+            if(poverty > 0 || pregnant > 0 || med_frail > 0 || former_foster > 0){
+              if(pregnant < 1 && med_frail < 1 && former_foster < 1){
+                return "You will be switched from paying premiums to paying copays and your MyRewards account will be suspended and penalized if you don't pay your premium payments within 60 days of the invoice date. You may also lose coverage for those 60 days your premium goes unpaid."
+              }else{
+                return "If you're paying premiums for MyRewards access, you will lose that access if your premiums are not paid within 60 days of the invoice date."
+              }
+            }else{
+              return "You will be disenrolled and locked out of Medicaid for 6 months if you don't pay your premium payments within 60 days of the invoice date."
+            }
+          };
+          
+          function retroEl(){
+            if(former_foster > 0 || pregnant > 0 || (caregiver > 0 && poverty54 > 0)){
+              return 'You will still be eligible for retroactive eligibility going back 90 days before your application for Medicaid was filed.'
+            }else if(med_frail > 0){
+              return 'You will no longer be eligible for retroactive eligibility. Medicaid benefits will only be accessible starting the first day of the month in which you apply for coverage.'
+            }else{
+              return "You will no longer be eligible for retroactive eligibility. Medicaid benefits will only be accessible starting the first day of the month that you pay premium. For example, if you pay your premium on April 15th, you will be covered starting April 1."
+            }
+          };
+          
+          function myRewards(){
+            if(former_foster > 0 || pregnant > 0 || med_frail > 0 || (caregiver > 0 && poverty54 > 0)){
+              return 'You will keep your vision, dental and over-the-counter medication benefits. But you can pay a premium to gain access to a rewards account. By doing things like taking health-literacy classes and performing community serivce, your MyRewards account will be credited "points" that you can then use to pay for things like gym memberships.'
+            }else{
+              return 'You will be losing your vision, dental and over-the-counter medication benefits. You will be given access to a MyRewards account. By doing things like taking health-literacy classes and performing community serivce, your MyRewards account will be credited "points" that you can then use to pay for dental, vision and other benefits.'
+            }
+          };
+          
+          function nonEmerMedTrans(){
+            if(former_foster > 0 || pregnant > 0 || med_frail > 0 || (caregiver > 0 && poverty54 > 0)){
+              return 'You will still have access to non-emergency medical transportation.'
+            }else{
+              return 'You will lose access to non-emergency medical transportation.'
+            }
+          };
+          
+          if(poverty == 0 &&  poverty138 == 0){
+            applicable_measures = ['Your income does not meet income requirements for Medicaid.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else if(med_waiver > 0){
+            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else if(medicare > 0){
+            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            ractive.set('applicableMeasures', applicable_measures);
+          }else{
+            var commengage_req = commEngage();
+            var premium_req = premium();
+            var lockout_req = lockOut();
+            var retro_req = retroEl();
+            var myrewards_req = myRewards();
+            var nemt_req = nonEmerMedTrans();
+            
+            applicable_measures.push(commengage_req);
+            applicable_measures.push(premium_req);
+            applicable_measures.push(lockout_req);
+            applicable_measures.push(retro_req);
+            applicable_measures.push(myrewards_req);
+            applicable_measures.push(nemt_req);
+            
+            ractive.set('applicableMeasures', applicable_measures);
+          }
+          
+        };
+        
+        
+        function compile_applicable_measures2(){
           applicable_measures = [];
           
           general_list = [];
@@ -410,30 +522,29 @@
           caregiver = ractive.get('userInput.caregiver');
           poverty54 = ractive.get('userInput.poverty54');
           poverty = ractive.get('userInput.poverty');
-          poverty138 = ractive.get('userInput.poverty138');
-          
-          console.log(pregnant);
-          
+          poverty138 = ractive.get('userInput.poverty138');          
           
           if(poverty == 0 &&  poverty138 == 0){
             applicable_measures = ['Your income does not meet income requirements for Medicaid.']
             ractive.set('applicableMeasures', applicable_measures);
-          }else if(med_waiver > 0 || med_frail > 0){
+          }else if(med_waiver > 0){
             applicable_measures = ['You do not have any changes to your Medicaid benefits.']
             ractive.set('applicableMeasures', applicable_measures);
           }else if(medicare > 0){
             applicable_measures = ['Medicare recipients do not qualify to receive Medicaid benefits also.']
             ractive.set('applicableMeasures', applicable_measures);
           }else{
-            if(poverty == 0 && poverty138 == 1){
+            // over 100% but under 138%, EXPANSION, poverty138
+            if(poverty138 == 1){
               general_list.push(waiver_measures['report']);
+              general_list.push(waiver_measures['myrewards']);
               general_list.push(waiver_measures['myrewardsgym']);
               cat2_list.push(waiver_measures['noretro']);
               cat3_list.push(waiver_measures['immediate']);
               cat4_list.push(waiver_measures['engage']);
             }else if(poverty > 0){
+              // over 54% but under 100%, EXPANSION
               general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
               general_list.push(waiver_measures['myrewardsgym']);
               cat2_list.push(waiver_measures['noretro']);
@@ -441,10 +552,10 @@
               cat3_list.push(waiver_measures['sixtydays']);
               cat4_list.push(waiver_measures['engage'])
             };
+            
             if(former_foster > 0){
               general_list.push(waiver_measures['report']);
               general_list.push(waiver_measures['nemt']);
-              general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
               general_list.push(waiver_measures['myrewardsgym']);
               cat2_list.push(waiver_measures['retro']);
@@ -453,23 +564,21 @@
             };
             if(pregnant > 0){
               general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
               general_list.push(waiver_measures['nemt']);
               cat2_list.push(waiver_measures['retro']);
               cat3_list.push(waiver_measures['noco']);
               cat4_list.push(waiver_measures['noengage']);
             };
-            /*if(med_frail == 1){
+            if(med_frail == 1){
               general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['autoenroll']);
               general_list.push(waiver_measures['benefits']);
               general_list.push(waiver_measures['myrewardsgym']);
               general_list.push(waiver_measures['nemt']);
               cat2_list.push(waiver_measures['noretro']);
               cat3_list.push(waiver_measures['noco']);
               cat4_list.push(waiver_measures['noengage']);
-            };*/
+            };
             if(caregiver > 0  || student == 1){
               general_list.push(waiver_measures['myrewards']);
               cat2_list.push(waiver_measures['noretro']);
@@ -481,7 +590,11 @@
             
             filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list);
           };
-        };  	   
+        };
+        
+        
+        
+         	   
   	}); //end $(document).ready
   			
   	</script>
