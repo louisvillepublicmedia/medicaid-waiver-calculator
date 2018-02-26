@@ -125,8 +125,8 @@ label.error{
     background-color: #ccc;
 }
 
-.more-details:after {
-    content: '\02795'; /* Unicode character for "plus" sign (+) */
+/*.more-details:after {
+    content: '\02795';
     font-size: 13px;
     color: #777;
     float: right;
@@ -134,16 +134,21 @@ label.error{
 }
 
 .active.more-details:after {
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
+    content: "\2796";
 }
 
-/* Style the accordion panel. Note: hidden by default */
 .panel {
     padding: 0 1rem;
     background-color: #ffffff;
     max-height:0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
+}*/
+
+.panel{
+  padding: 0 1rem 1rem 3rem;
+  background-color: #ffffff;
+  font-size: .75em;
 }
 
 #container{

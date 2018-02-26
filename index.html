@@ -188,7 +188,7 @@
   
     <script>
     	$(document).ready(function() {
-      	
+
       	$(window).scroll(function(){
           var currentScreenPosition  = $(document).scrollTop();
           var appScreenPosition = $('#app-begin').offset().top;
@@ -275,9 +275,7 @@
   						return '$' + milNum;
   					}					
   	      },// end data
-  	      makeAccordions: function(){
-    	      
-  	      }
+  	      
   	    }); //end var ractive
     		
   	    
@@ -357,9 +355,10 @@
   				compile_applicable_measures();
   	    });
   	    
-  	    ractive.observe('applicableMeasures', function(newValue, oldValue){
-  				makeAccordions();
-  	    });
+  	    //ractive.observe('applicableMeasures', function(newValue, oldValue){
+    	  //  makeAccordions();
+  	    //});
+  	    
   	      	    
   	    function getPovertyLevel(household){
     	    if(household == 1) return 12140;
@@ -637,37 +636,50 @@
             var myrewards_req = myRewards();
             var nemt_req = nonEmerMedTrans();
             
-            applicable_measures.push(commengage_req);
             applicable_measures.push(premium_req);
             applicable_measures.push(lockout_req);
             applicable_measures.push(retro_req);
             applicable_measures.push(coverage_req);
             applicable_measures.push(myrewards_req);
             applicable_measures.push(nemt_req);
+            applicable_measures.push(commengage_req);
             
             ractive.set('applicableMeasures', applicable_measures);
+            //makeAccordions();
           }
-          
         };
         
-        function makeAccordions(){
-          var acc = document.getElementsByClassName("more-details");
-          var i;
-          
-          for (i = 0; i < acc.length; i++) {
-            console.log(acc[i]);
-            acc[i].addEventListener("click", function() {
-              this.classList.toggle("active");
-              var panel = this.nextElementSibling;
-              if (panel.style.maxHeight){
-                panel.style.maxHeight = null;
-              } else {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-              } 
-            });
-          }
-        }
-   	   
+        //var _listen = function(){
+        //  this.classList.toggle("active");
+        //  if(this.nextElementSibling){
+        //    var panel = this.nextElementSibling;
+        //    if (panel.style.maxHeight){
+        //      panel.style.maxHeight = null;
+        //    } else {
+        //      panel.style.maxHeight = panel.scrollHeight + "px";
+        //    } 
+        //  }
+        //}
+        //
+        //function makeAccordions(){
+        //  var acc = document.getElementsByClassName("accordion");
+        //  var i;
+        //            
+        //  for (i = 0; i < acc.length; i++) {
+        //    acc[i].removeEventListener("click", _listen, true);
+        //    acc[i].addEventListener("click", _listen, true);
+        //  }
+        //};
+        //
+        //
+        //var acc = document.getElementsByClassName("accordion");
+        //var i;
+        //          
+        //for (i = 0; i < acc.length; i++) {
+        //  acc[i].addEventListener("click", _listen, true);
+        //}
+
+        
   	  }); //end $(document).ready
   			
   	</script>
