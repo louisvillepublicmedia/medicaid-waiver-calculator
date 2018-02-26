@@ -10,10 +10,8 @@ input[type="range"]{
   width:100%; 
 }
 
-.fixed{
-  position:fixed;
-  top:30px;
-  right:3rem;
+.lead{
+  font-size: 1.25em;
 }
 
 p{
@@ -64,18 +62,8 @@ label.error{
   border-radius: 5px;
   background:#ffffff;
   max-height: 550px;
+  max-width:450px;
   overflow-y: scroll;
-}
-
-.results ul li{
-  list-style: none;
-  background:#f5f5f5;
-  padding:1rem;
-  margin-bottom:5px;
-}
-
-.results p{
-  font-size: 1.5rem;
 }
 
 /* width */
@@ -98,8 +86,64 @@ label.error{
     background: #555; 
 }
 
-.glyphicon, h3{
-	display: inline;
+#jump{
+  position: fixed;
+  bottom:0;
+  right:0;
+  display:block;
+  background:#ffffff;
+  opacity: 0.75;
+  text-align: right;
+  padding:1rem;
+}
+
+#jump a{
+  font-weight: 800;
+  font-size: 1.25em;
+}
+
+/***********************
+  Results Accordion
+************************/
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion{
+    background-color: #f5f5f5;
+    color: #444;
+    cursor: pointer;
+    padding:1rem;
+    width: 100%;
+    margin-bottom:5px;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.more-details:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+.active.more-details:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    padding: 0 1rem;
+    background-color: #ffffff;
+    max-height:0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
 }
 
 #container{
@@ -113,4 +157,54 @@ label.error{
 .thick-divider{
 	border-top:#cccccc 4px solid;
 }
+
+/***********************
+  Glossary
+************************/
+#glossary{
+  width:100%;
+}
+
+#glossary h3{
+  margin-bottom:2rem;
+}
+
+#glossary h4{
+  margin-bottom:.5rem;
+  font-size: 2.25rem;
+}
+
+
+/***********************
+  Source
+************************/
+#source{
+  font-style: italic;
+}
+
+@media (min-width: 46.875em) { /* 750ish px and up */
+  #jump{
+    display:none;
+  }
+  #glossary{
+    width:50%;
+  }
+  
+  .fixed{
+    position:fixed;
+    z-index: 101;
+    top:30px;
+    right:3rem;
+  }
+}
+
+@media (min-width: 60em) { /* 960px and up */
+  
+}
+
+@media (min-width: 75em) { /* 1200px and up */
+
+}
+
+
 

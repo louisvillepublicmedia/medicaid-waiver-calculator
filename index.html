@@ -1,27 +1,60 @@
 <!doctype html>
 <html lang='en-GB'>
 <head>
-	<link rel="stylesheet" href="../css/skeleton.css">	
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/skeleton.css">	
 	<link rel="stylesheet" href="css/style.css">
 
   <meta charset='utf-8'>
-  <title>Medicaid Waiver Calculator</title>
+  <title>Kentucky Medicaid Waiver Calculator</title>
 </head>
 
   <body>
   	
   	<!-- All of the html element represented in the <script id='template'> below will render to this container -->
     <div id='container' class='container'></div>
+    <div id='jump'><a href="#results">See your results &darr;</a></div>
+    
+	  <div class="container">
+  	  <div class="row thick-divider">&nbsp;</div>
+  	  <div class="row" id="glossary">
+    		<h3>Glossary</h3>		
+  		    <h4 id="glossary-premium">Premium</h4>
+          <p>The amount paid, often on a monthly basis, for health insurance. The cost of the premium may be shared between employers or government purchasers and individuals.</p>
+          <h4 id="copay">Co-payment</h4>
+          <p>A fixed dollar amount paid by an individual at the time of receiving a covered health care service from a participating provider. The required fee varies by the service provided and by the health plan.</p>
+          <h4 id="glossary-myrewards">MyRewards Account</h4>
+          <p>All adults (expansion adults, low-income parents, former foster care youth, and those receiving ESI premium assistance) will have a My Rewards incentive account if they are paying monthly premiums of at least $1.00. PregThe incentive account may be used to access additional, prior authorized, benefits not otherwise covered once sufficient funds are accrued.  These benefits include dental, vision, over the counter (OTC) medications, and limited reimbursement for the purchase of a gym membership. Pregnant women can have a My Rewards account without having to pay premiums.</p>
+          <h4 id="glossary-medicaid">Medicaid</h4>
+          <p>Enacted in 1965 under Title XIX of the Social Security Act, Medicaid is a federal entitlement program that provides health and long-term care coverage to certain categories of low-income Americans. States design their own Medicaid programs within broad federal guidelines. </p>
+          <h4 id="glossary-medicare">Medicare</h4>
+          <p>Enacted in 1965 under Title XVII of the Social Security Act, Medicare is a federal entitlement program that provides health insurance coverage to 45 million people, including people age 65 and older, and younger people with permanent disabilities, end-state renal disease, and Lou Gehrig’s disease</p>
+          <h4 id="glossary-fpl">Federal Poverty Level (FPL)</h4>
+          <p>The federal government’s working definition of poverty that is used as the reference point to determine the number of people with income below poverty and the income standard for eligibility for public programs.</p>
+          <h4 id="glossary-retriel">Retroactive eligibility</h4>
+          <p>Federal law directs state Medicaid programs to cover (and provides federal matching funds for) medical bills incurred up to 3 months prior to a beneficiary’s application date.</p>
+  	  </div>
+  	  
+  	  <div class="row thick-divider">&nbsp;</div> 
+      <div class="row" id="source">
+    		<h3>About the Data</h3>		
+  		  <p class="credit">Sources: xxxxxx<br>
+    		  Data and language compiled by Lisa Gillespie and Alexandra Kanik<br>
+  		  Calculator developed by Alexandra Kanik</p>
+  	  </div>
+    </div>
   
     <script id='template' type='text/ractive'>
     	<div class="row">
-  		  <h1>Medicaid Waiver Calculator</h1>
-  		  <p class="lead">WFPL created this calculator to help you understand how the Medicaid waiver will affect you based on your personal situation.</p>
-        <p class="lead">To use the calculator, go through each step to select your personal characteristics. Use the sliders to set your household income and property value; you'll see the dollar figures adjust in the box to the right. Then check any of the additional boxes for circumstances that might apply to you.</p>
-        <p class="lead">Please note that this app does not collect or store your personal information.</p>
+  		  <h1>Kentucky Medicaid Waiver Calculator</h1>
+  		  <p class="lead">This calculator was created to help you understand how the new Kentucky Medicaid waiver will affect you personally.</p>
+        <p class="lead">To use the calculator, go through each step below to select your personal characteristics.</p>
+        <p class="lead">Please note that the state hasn’t fully finalized this criteria, and the interactive will be updated as more information is available. 
+</p>
+        <p><em>This app does not collect or store your personal information.</em></p>
   		</div>
   		
-  		<div id="app-begin" class="row thick-divider">&nbsp</div>
+  		<div id="app-begin" class="row thick-divider">&nbsp;</div>
   		
   		<div class="row">
   		  <div class="one-half column">
@@ -82,7 +115,7 @@
   							</label>
   							<label>
   						    <input type='checkbox' checked='{{student}}'>
-  						    I am a full-time student
+  						    I am a full-time student (you will need to apply for this status)
   							</label>
   							<label>
   						    <input type='checkbox' checked='{{food}}'>
@@ -132,27 +165,21 @@
   			  </form>
   		  </div>
   		  
-  		  <div class="one-half column results">
+  		  <div id="results" class="one-half column results">
   				
   				<h4>New measures</h4>
-  				<ul>
+  				<div class="measures">
   				{{ #each applicableMeasures: num }}
-  				  <li>{{applicableMeasures[num]}}</li>
+  				  {{ #if details }}
+  				    <div class="measure-title more-details accordion">{{{ title }}}</div>
+              <div class="measure-detail panel">{{{ details }}}</div>
+            {{ else }}
+              <div class="measure-title accordion">{{{ title }}}</div>
+  				  {{ /if }}
   				{{/each}}
-  				</ul>
-  				
+  				</div>
   		  </div>
-  		  
   		</div>
-  		
-  	  <div class="row thick-divider">&nbsp</div>
-      
-      <div class="row">
-    		<h3>About the Data </h3>		
-  		  <p class="credit">Sources: xxxxxx<br>
-  		  Calculator developed by Alexandra Kanik</p>
-  	  </div>
-  	  
     </script>
   
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
@@ -247,7 +274,10 @@
   						var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   						return '$' + milNum;
   					}					
-  	      }// end data
+  	      },// end data
+  	      makeAccordions: function(){
+    	      
+  	      }
   	    }); //end var ractive
     		
   	    
@@ -284,6 +314,9 @@
   	      	    
   	    ractive.observe('userHousehold', function(newValue, oldValue){
   				ractive.set('userInput.household', newValue);
+  				if(newValue < 2){
+    				ractive.set('userInput.caregiver', 0);
+  				}
   				setPovertyStatus();
   				compile_applicable_measures()
   	    });
@@ -323,6 +356,10 @@
   				ractive.set('userInput.food', newValue);
   				compile_applicable_measures();
   	    });
+  	    
+  	    ractive.observe('applicableMeasures', function(newValue, oldValue){
+  				makeAccordions();
+  	    });
   	      	    
   	    function getPovertyLevel(household){
     	    if(household == 1) return 12140;
@@ -345,6 +382,7 @@
     	    var povertyLevel = getPovertyLevel(household);
     	    var poverty138Level = povertyLevel*1.38;
     	    var poverty54Level = povertyLevel*.54;
+    	    ractive.set('userInput.povertyLevel', povertyLevel);
     	    
     	    if(income <= poverty54Level){
       	    ractive.set('userInput.povertyHR','Your income is at or below 54% of the poverty level.');
@@ -368,46 +406,9 @@
       	    ractive.set('userInput.poverty', 0);
           }
     	  }
-    	  
-    	  function filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list){
-          //for some category lists, values conflict
-          //this is where we set the priority for those values
-          
-          filtered_list = [];
-          
-          if(cat2_list.length > 1){
-            cat2_list = ['Retroactive eligibility']
-          };
-          
-          if(cat3_list.length > 1 && cat3_list.indexOf('No copays or premiums')>-1){
-            cat3_list = ['No copays or premiums']
-          }else if(cat3_list.indexOf('Premium payment due before coverage can start')>-1 && cat3_list.indexOf('60 days to make premium payment')>-1){
-            indexprepay = cat3_list.indexOf('Premium payment due before coverage can start');
-            cat3_list.splice(indexprepay,1);
-          };
-          
-          if(cat4_list.length > 1){
-            cat4_list = ['No community engagment']
-          };
-          
-          filtered_list = applicable_measures.concat(general_list, cat2_list, cat3_list, cat4_list);
-          unique_filtered_list = filtered_list.reduce(function(a,b){
-            if(a.indexOf(b) == -1){
-              a.push(b);
-            }
-            return a;
-          }, []);
-          
-          ractive.set('applicableMeasures', unique_filtered_list);
-        };
-        
+    	          
         function compile_applicable_measures(){
           applicable_measures = [];
-          
-          general_list = [];
-          cat2_list = [];
-          cat3_list = [];
-          cat4_list = [];
           
           medicare = ractive.get('userInput.medicare');
           med_waiver = ractive.get('userInput.med_waiver');
@@ -417,78 +418,222 @@
           student = ractive.get('userInput.student');
           food = ractive.get('userInput.food');
           caregiver = ractive.get('userInput.caregiver');
+          income = ractive.get('userInput.income');
+          povertyLevel = ractive.get('userInput.povertyLevel');
           poverty54 = ractive.get('userInput.poverty54');
           poverty = ractive.get('userInput.poverty');
           poverty138 = ractive.get('userInput.poverty138');          
           
           function commEngage(){
             if(former_foster > 0 || pregnant > 0 || caregiver > 0 || med_frail > 0 || student > 0 || food > 0){
-              return 'You are exempt from the 80-hour community engagement requirement.'
+              // if you're just a caregiver
+              if(former_foster < 1 && pregnant < 1 && med_frail < 1 && student < 1 && food < 1){
+                measure = {};
+                title = 'You are exempt from the 80-hour community engagement requirement. However, only one caregiver per household may claim this examption.';
+                details = 'Example: You and your husband stay home to take care of your 2 children and also your elderly parents. Either you or your husband will be able to claim the exemption.';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure; 
+              }else{
+                measure = {};
+                title = 'You are exempt from the 80-hour community engagement requirement.';
+                details = '';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              }
             }else{
-              return 'Complete 80 hours of community service per month.'
+              measure = {};
+              title = 'Complete 80 hours of community service per month.';
+              details = `<p>You will have to complete 80 hours a month of some combination of ‘community engagement’ like: employment, job searching, job training, education (related to employment, high school, college, graduate, ESL, vocational, etc.) or volunteer work (community work experience, community service).</p>
+              <p>If you do not complete these hours and report them, your health insurance will be suspended.</p>
+              <p>To regain coverage, you will have 30 days to either:<br>
+                1) Complete a state-sponsored financial or health literacy course<br>
+                2) Complete 80 hours of community engagement in that 30 days
+              </p>
+              <p>If you haven’t met these requirements by your redetermination date you’ll have your insurance terminated. At this point, you can regain coverage if you submit a new Medicaid insurance application.</p>
+              <p>Kentucky will provide ‘good cause exemptions’ in some circumstances if you cannot meet the requirements. These include: if you were hospitalized, a member of your family died or was put in an institution, you were evicted from your home or became homeless, you were the victim of a natural disaster (like a flood or fire) or you experienced domestic violence.</p>`;
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
             }
           };
           
           function premium(){
             if(former_foster > 0 || pregnant > 0 || med_frail > 0){
-              return 'You will not need to pay premiums or copays.'
+              if(pregnant > 0){
+                measure = {};
+                title = 'You will will never have to pay a premium during your pregnancy.';
+                details = '';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              }else{
+                measure = {};
+                title = 'You will not need to pay premiums or copays.';
+                details = 'However, you can pay a premium for access to a  MyRewards account, which could be used to help pay for a gym membership. If you don’t pay your premium within 60 days of invoice date, you’ll lose access to that account.';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              }
             }else{
-              return 'Pay a monthly premium based on your household income.'
+              measure = {};
+              details = '';
+              
+              var getTitle = function(income, povertyLevel){
+                if(income < (povertyLevel*.25)) return 'You will need to pay a premium of <strong>$1.00</strong> per month.';
+                if(income <= (povertyLevel*.5)) return 'You will need to pay a premium of <strong>$4.00</strong> per month.';
+                if(income <= povertyLevel) return 'You will need to pay a premium of <strong>$8.00</strong> per month.';
+                return 'You will need to pay a premium of <strong>$15.00</strong> per month.';
+              };
+      
+              measure['title'] = getTitle(income, povertyLevel);
+              measure['details'] = details;
+              return measure;
             }
           };
           
           function lockOut(){
-            if(poverty > 0 || pregnant > 0 || med_frail > 0 || former_foster > 0){
-              if(pregnant < 1 && med_frail < 1 && former_foster < 1){
-                return "You will be switched from paying premiums to paying copays and your MyRewards account will be suspended and penalized if you don't pay your premium payments within 60 days of the invoice date. You may also lose coverage for those 60 days your premium goes unpaid."
+            if(poverty > 0 || pregnant > 0 || med_frail > 0 || former_foster > 0 || caregiver > 0){
+              // if you're just under 100 poverty
+              if(pregnant < 1 && med_frail < 1 && former_foster < 1 && caregiver < 0){
+                measure = {};
+                title = 'You could face a lock out for a couple things.'
+                details = `1) <strong>Community Engagement</strong>: You could be locked out if you do not complete 80 hours of community engagement hours. You can avoid being locked out by making up the 80 hours within the next month.  Unless you do this, you’ll be kicked off your coverage for six months. During that six month time frame you can regain coverage if you take a state-sponsored health or financial literacy course.<br>
+                2) <strong>Annual Renewal</strong>: You could be locked out for not completing an annual renewal on time.<br>
+                3) <strong>Reporting changes in eligibility</strong>: You could be locked out if the state finds out you’ve had a change income, dependents, medical frailty, etc. and did not notify them within 10 days.`;
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              // if you're a caregiver
+              }else if(pregnant < 1 && med_frail < 1 && former_foster < 1){
+                measure = {};
+                title = 'You could face a lock out for a couple things.';
+                details = `1) <strong>Annual Renewal</strong>: You could be locked out for not completing an annual renewal on time. If you’re locked out, you can take a financial course or health literacy course to regain coverage.<br>
+              2) <strong>Reporting changes in eligibility</strong>: You could be locked out if the state finds out you’ve had a change income, dependents, medical frailty, etc. and did not notify them within 10 days.`;
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              // if you're pregnant, med_frail or former_foster  
               }else{
-                return "If you're paying premiums for MyRewards access, you will lose that access if your premiums are not paid within 60 days of the invoice date."
+                measure = {};
+                title = 'You will never face a lockout period from your benefits.';
+                details = '';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
               }
             }else{
-              return "You will be disenrolled and locked out of Medicaid for 6 months if you don't pay your premium payments within 60 days of the invoice date."
+              measure = {};
+              title = 'You could face a lock out for a couple things.';
+              details = `1) <strong>Community Engagement</strong>: You could be locked out if you do not complete 80 hours of community engagement hours. You can avoid being locked out by making up the 80 hours within the next month.  Unless you do this, you’ll be kicked off your coverage for six months. During that six month time frame you can regain coverage if you take a state-sponsored health or financial literacy course.<br>
+                2) <strong>Premiums</strong>: You could be locked out if you do not pay your premiums on time. You could regain coverage, however, by paying back the owed premiums up to three months.<br>
+                3) <strong>Annual Renewal</strong>: You could be locked out for not completing an annual renewal on time.<br>
+                4) <strong>Reporting changes in eligibility</strong>: You could be locked out if the state finds out you’ve had a change income, dependents, medical frailty, etc. and did not notify them within 10 days.`;
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
             }
           };
           
           function retroEl(){
-            if(former_foster > 0 || pregnant > 0 || (caregiver > 0 && poverty54 > 0)){
-              return 'You will still be eligible for retroactive eligibility going back 90 days before your application for Medicaid was filed.'
-            }else if(med_frail > 0){
-              return 'You will no longer be eligible for retroactive eligibility. Medicaid benefits will only be accessible starting the first day of the month in which you apply for coverage.'
+            if(former_foster > 0 || pregnant > 0){
+              measure = {};
+              title = 'Medical claims you have backdating three months before your application approval will be paid for by the state.';
+              details = '';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
             }else{
-              return "You will no longer be eligible for retroactive eligibility. Medicaid benefits will only be accessible starting the first day of the month that you pay premium. For example, if you pay your premium on April 15th, you will be covered starting April 1."
+              measure = {};
+              title = 'Medicaid benefits will only be accessible starting the first day of the month that you pay premium. This means the state will not pay for any medical claims you have in the previous three months before you pay your premium.';
+              details = '';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
+            }
+          };
+          
+          function coverageStart(){
+            if(former_foster > 0 || med_frail > 0){
+              measure = {};
+              title = 'Your insurance will start on first day of the month of your application date.';
+              details = '';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
+            }else{
+              measure = {};
+              title = 'Your insurance will start the first day of the month when you pay a premium. A premium is a monthly payment you’ll have to keep your coverage.';
+              details = 'For example, if you pay your premium on April 15th, you will be covered starting April 1.';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
             }
           };
           
           function myRewards(){
             if(former_foster > 0 || pregnant > 0 || med_frail > 0 || (caregiver > 0 && poverty54 > 0)){
-              return 'You will keep your vision, dental and over-the-counter medication benefits. But you can pay a premium to gain access to a rewards account. By doing things like taking health-literacy classes and performing community serivce, your MyRewards account will be credited "points" that you can then use to pay for things like gym memberships.'
+              if(pregnant > 0){
+                measure = {};
+                title = 'You will keep your vision, dental and over-the-counter drug benefits.';
+                details = '';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              }else{
+                measure = {};
+                title = 'You will keep your vision, dental and over-the-counter medication benefits. But you can pay a premium to gain access to a “My Rewards account.';
+                details = 'By doing things like taking health-literacy classes and not missing medical appointments, your MyRewards account will be credited "dollars." You can use these dollars to pay for fitness activities, like a gym membership.';
+                measure['title'] = title;
+                measure['details'] = details;
+                return measure;
+              }
             }else{
-              return 'You will be losing your vision, dental and over-the-counter medication benefits. You will be given access to a MyRewards account. By doing things like taking health-literacy classes and performing community serivce, your MyRewards account will be credited "points" that you can then use to pay for dental, vision and other benefits.'
+              measure = {};
+              title = 'You lose automatic vision, dental and over-the-counter medication benefits. If you pay a premium, you’ll access a “My Rewards” account.';
+              details = 'By doing things like taking health-literacy classes and not missing medical appointments, your My Rewards account will be credited "dollars" that you can then use to pay for dental, vision and other services.';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
+
             }
           };
           
           function nonEmerMedTrans(){
             if(former_foster > 0 || pregnant > 0 || med_frail > 0 || (caregiver > 0 && poverty54 > 0)){
-              return 'You will still have access to non-emergency medical transportation.'
+              measure = {};
+              title = 'You will still have access to non-emergency medical transportation. This can be used to drive you to medical appointments that you would not otherwise be able to get to.';
+              details = '';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
             }else{
-              return 'You will lose access to non-emergency medical transportation.'
+              measure = {};
+              title = 'You will lose access to non-emergency medical transportation. This is currently used by some enrollees to help transport them to and from medical appointments they would not otherwise be able to get to.';
+              details = '';
+              measure['title'] = title;
+              measure['details'] = details;
+              return measure;
+
             }
           };
           
           if(poverty == 0 &&  poverty138 == 0){
-            applicable_measures = ['Your income does not meet income requirements for Medicaid.']
+            applicable_measures = [{title:'Your income does not meet income requirements for Medicaid.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else if(med_waiver > 0){
-            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            applicable_measures = [{title:'You do not have any changes to your Medicaid benefits.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else if(medicare > 0){
-            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
+            applicable_measures = [{title:'You do not have any changes to your Medicaid benefits.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else{
             var commengage_req = commEngage();
             var premium_req = premium();
             var lockout_req = lockOut();
             var retro_req = retroEl();
+            var coverage_req = coverageStart();
             var myrewards_req = myRewards();
             var nemt_req = nonEmerMedTrans();
             
@@ -496,6 +641,7 @@
             applicable_measures.push(premium_req);
             applicable_measures.push(lockout_req);
             applicable_measures.push(retro_req);
+            applicable_measures.push(coverage_req);
             applicable_measures.push(myrewards_req);
             applicable_measures.push(nemt_req);
             
@@ -504,98 +650,25 @@
           
         };
         
-        
-        function compile_applicable_measures2(){
-          applicable_measures = [];
+        function makeAccordions(){
+          var acc = document.getElementsByClassName("more-details");
+          var i;
           
-          general_list = [];
-          cat2_list = [];
-          cat3_list = [];
-          cat4_list = [];
-          
-          medicare = ractive.get('userInput.medicare');
-          med_waiver = ractive.get('userInput.med_waiver');
-          med_frail = ractive.get('userInput.med_frail');
-          former_foster = ractive.get('userInput.former_foster');
-          pregnant = ractive.get('userInput.pregnant');
-          student = ractive.get('userInput.student');
-          caregiver = ractive.get('userInput.caregiver');
-          poverty54 = ractive.get('userInput.poverty54');
-          poverty = ractive.get('userInput.poverty');
-          poverty138 = ractive.get('userInput.poverty138');          
-          
-          if(poverty == 0 &&  poverty138 == 0){
-            applicable_measures = ['Your income does not meet income requirements for Medicaid.']
-            ractive.set('applicableMeasures', applicable_measures);
-          }else if(med_waiver > 0){
-            applicable_measures = ['You do not have any changes to your Medicaid benefits.']
-            ractive.set('applicableMeasures', applicable_measures);
-          }else if(medicare > 0){
-            applicable_measures = ['Medicare recipients do not qualify to receive Medicaid benefits also.']
-            ractive.set('applicableMeasures', applicable_measures);
-          }else{
-            // over 100% but under 138%, EXPANSION, poverty138
-            if(poverty138 == 1){
-              general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['myrewards']);
-              general_list.push(waiver_measures['myrewardsgym']);
-              cat2_list.push(waiver_measures['noretro']);
-              cat3_list.push(waiver_measures['immediate']);
-              cat4_list.push(waiver_measures['engage']);
-            }else if(poverty > 0){
-              // over 54% but under 100%, EXPANSION
-              general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['benefits']);
-              general_list.push(waiver_measures['myrewardsgym']);
-              cat2_list.push(waiver_measures['noretro']);
-              cat3_list.push(waiver_measures['choiceco']);
-              cat3_list.push(waiver_measures['sixtydays']);
-              cat4_list.push(waiver_measures['engage'])
-            };
-            
-            if(former_foster > 0){
-              general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['nemt']);
-              general_list.push(waiver_measures['benefits']);
-              general_list.push(waiver_measures['myrewardsgym']);
-              cat2_list.push(waiver_measures['retro']);
-              cat3_list.push(waiver_measures['noco']);
-              cat4_list.push(waiver_measures['noengage']);
-            };
-            if(pregnant > 0){
-              general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['benefits']);
-              general_list.push(waiver_measures['nemt']);
-              cat2_list.push(waiver_measures['retro']);
-              cat3_list.push(waiver_measures['noco']);
-              cat4_list.push(waiver_measures['noengage']);
-            };
-            if(med_frail == 1){
-              general_list.push(waiver_measures['report']);
-              general_list.push(waiver_measures['benefits']);
-              general_list.push(waiver_measures['myrewardsgym']);
-              general_list.push(waiver_measures['nemt']);
-              cat2_list.push(waiver_measures['noretro']);
-              cat3_list.push(waiver_measures['noco']);
-              cat4_list.push(waiver_measures['noengage']);
-            };
-            if(caregiver > 0  || student == 1){
-              general_list.push(waiver_measures['myrewards']);
-              cat2_list.push(waiver_measures['noretro']);
-              cat4_list.push(waiver_measures['noengage']);
-            };
-            if(caregiver > 0  && poverty54 > 0){
-              general_list.push(waiver_measures['nemt']);
-            };
-            
-            filter_measures(applicable_measures, general_list, cat2_list, cat3_list, cat4_list);
-          };
-        };
-        
-        
-        
-         	   
-  	}); //end $(document).ready
+          for (i = 0; i < acc.length; i++) {
+            console.log(acc[i]);
+            acc[i].addEventListener("click", function() {
+              this.classList.toggle("active");
+              var panel = this.nextElementSibling;
+              if (panel.style.maxHeight){
+                panel.style.maxHeight = null;
+              } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+              } 
+            });
+          }
+        }
+   	   
+  	  }); //end $(document).ready
   			
   	</script>
   </body>
