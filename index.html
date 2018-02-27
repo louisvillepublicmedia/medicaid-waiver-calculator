@@ -9,8 +9,20 @@
   <title>Kentucky Medicaid Waiver Calculator</title>
 </head>
 
-  <body>
-  	
+<body>
+    <div class="container">
+      	<div class="row">
+        	<h1>Kentucky Medicaid Waiver Calculator</h1>
+        	<div class="lead">
+            	<p>Earlier this year Gov. Matt Bevin got the green light from the federal government to start an experiment with Medicaid. Medicaid, since its start in the 1960s, has offered health insurance to people based on their income or disability status. That income level increased with the Affordable Care Act.</p>
+            	<p>The experiment will mean some groups of people – starting July 1 – will have to do a few new things to keep coverage. That can include a monthly payment (called a premium), a community engagement requirement (you might have heard it called a work requirement) and a bunch of other new criteria. For other groups, there will be minimal or no changes at all.</p>
+                <p>The calculator below was created to help you understand what, if anything, you’re going to have to do differently starting July 1 to keep your Medicaid health insurance.</p>
+                <p>To use the calculator, go through each step below to select your personal characteristics. Please note that the state hasn’t fully finalized this criteria, and the interactive will be updated as more information is available.</p>
+                <p><em>This app does not collect or store your personal information.</em></p>
+            </div>
+        </div>
+    </div>
+    
   	<!-- All of the html element represented in the <script id='template'> below will render to this container -->
     <div id='container' class='container'></div>
     <div id='jump'><a href="#results">See your results &darr;</a></div>
@@ -38,22 +50,14 @@
   	  <div class="row thick-divider">&nbsp;</div> 
       <div class="row" id="source">
     		<h3>About the Data</h3>		
-  		  <p class="credit">Sources: xxxxxx<br>
+  		  <p class="credit">Sources: <a href="https://www.medicaid.gov/Medicaid-CHIP-Program-Information/By-Topics/Waivers/1115/downloads/ky/ky-health-ca.pdf" target="_blank">U.S. Department of Health and Human Services</a>; <a href="https://kentuckyhealth.ky.gov/Pages/FAQ.aspx" target="_blank">Kentucky HEALTH</a>; <a href="https://www.kff.org/medicaid/issue-brief/approved-changes-to-medicaid-in-kentucky/" target="_blank">The Henry J. Kaiser Family Foundation</a><br>
     		  Data and language compiled by Lisa Gillespie and Alexandra Kanik<br>
   		  Calculator developed by Alexandra Kanik</p>
   	  </div>
     </div>
   
     <script id='template' type='text/ractive'>
-    	<div class="row">
-  		  <h1>Kentucky Medicaid Waiver Calculator</h1>
-  		  <p class="lead">This calculator was created to help you understand how the new Kentucky Medicaid waiver will affect you personally.</p>
-        <p class="lead">To use the calculator, go through each step below to select your personal characteristics.</p>
-        <p class="lead">Please note that the state hasn’t fully finalized this criteria, and the interactive will be updated as more information is available. 
-</p>
-        <p><em>This app does not collect or store your personal information.</em></p>
-  		</div>
-  		
+    	  		
   		<div id="app-begin" class="row thick-divider">&nbsp;</div>
   		
   		<div class="row">
@@ -74,7 +78,7 @@
     			  
     			  <div class="form-group">
   			  		<div class="form-head">
-                <h4>Do you currently receive Medicaid under one of these waivers?</h4>
+                <h4>Do any of these apply to you?</h4>
   			  		</div>
   			  		<div class="row">
     			  		<select value='{{selectedMedWaiver}}'>
@@ -128,7 +132,7 @@
   			  	<div class="form-group" id="householdSlider">
   			  		<div class="form-head">
   				  		<h4>Select your household size:</h4>
-  				  		<label>Include yourself, your spouse (if married) and anyone you'll claim as a tax dependent in 2019</label>
+  				  		<label>Include yourself, your spouse (if married) and anyone you currently claim as a tax dependent</label>
   				  	</div>
   			  		<input type="range" min="1" max="12" step="1" value="{{userHousehold}}" />
   			  		<label class="indicator">Household size = {{userHousehold}}</label>
@@ -168,6 +172,9 @@
   		  <div id="results" class="one-half column results">
   				
   				<h4>New measures</h4>
+  				{{ #if userInput.med_frail }}
+  				  <p class="notes">You may qualify for a 'Medically frail' exemption. This means you will keep your benefits as-is. But make sure to check with your Medicaid insurer on how to obtain this exemption.</p>
+  				{{ /if }}
   				<div class="measures">
   				{{ #each applicableMeasures: num }}
   				  {{ #if details }}
@@ -198,24 +205,9 @@
             $( '.results' ).removeClass( 'fixed' );
           };
         });
-    		
-    		var waiver_measures = {
-      		'nemt':'Access Non-Emergency Medical Transportation',
-      		'retro':'Retroactive eligibility',
-          'noretro':'No retroactive eligibility',
-          'noco':'No copays or premiums',
-          'choiceco':'Choice to pay copays instead of premiums',
-          'sixtydays':'60 days to make premium payment',
-          'immediate':'Premium payment due before coverage can start',
-          'noengage':'No community engagment',
-          'engage':'Community engagment required',
-          'benefits':'Keep vision and other benefits',
-          'myrewards':'Can earn points toward MyRewards program',
-          'myrewardsgym':'Can earn points toward MyRewards program for gym benefits, if they pay a premium',
-          'report':'Manditory reporting for changes to Medicaid eligibility'
-          };
-          
+    		          
         var med_waivers = [
+          {id:'SSD', name:'I receive Social Security Disability income'},
           {id:'HC', name:'Home and Community-Based Waiver - 1915(c)'},
           {id:'MP', name:'Michelle P Waiver - 1915(c)'},
           {id:'ABI', name:'Acquired Brain Injury - 1915(c)'},
@@ -227,7 +219,6 @@
         ];
         
         var med_conditions = [
-          {id:'SSD', name:'I meet Social Security disability criteria'},
           {id:'MD', name:'Disabling mental disorder'},
           {id:'SUD', name:'Chronic Substance Use Disorder'},
           {id:'SCMC', name:'Serious and complex medical conditions'},
@@ -264,16 +255,15 @@
   	      	userIncome: 12000,
   	      	userHousehold:1,
   	      	userDependents:0,
-  	      	applicableMeasures:waiver_measures,
   	      	waivers:med_waivers,
   	      	conditions:med_conditions,
-  					
-  					//formats
-  					dollarFormat: function(num){
-  						var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
-  						var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  						return '$' + milNum;
-  					}					
+            notes:'',
+			//formats
+			dollarFormat: function(num){
+				var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
+				var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+				return '$' + milNum;
+			}					
   	      },// end data
   	      
   	    }); //end var ractive
@@ -298,7 +288,7 @@
   				}else{
     				ractive.set('userInput.med_frail', 0);
   				}
-  				compile_applicable_measures()
+  				compile_applicable_measures();
   	    });
   	    
   	    ractive.observe('medicareOption', function(newValue, oldValue){
@@ -355,11 +345,8 @@
   				compile_applicable_measures();
   	    });
   	    
-  	    //ractive.observe('applicableMeasures', function(newValue, oldValue){
-    	  //  makeAccordions();
-  	    //});
   	    
-  	      	    
+  	    //FPL 2018: https://aspe.hhs.gov/poverty-guidelines  	    
   	    function getPovertyLevel(household){
     	    if(household == 1) return 12140;
     	    if(household == 2) return 16460;
@@ -428,8 +415,8 @@
               // if you're just a caregiver
               if(former_foster < 1 && pregnant < 1 && med_frail < 1 && student < 1 && food < 1){
                 measure = {};
-                title = 'You are exempt from the 80-hour community engagement requirement. However, only one caregiver per household may claim this examption.';
-                details = 'Example: You and your husband stay home to take care of your 2 children and also your elderly parents. Either you or your husband will be able to claim the exemption.';
+                title = 'You may qualify for a "caregiver exemption." Make sure to check with you Medicaid insurer to see if you qualify for this exemption. Only one person per household may claim this. If you qualify, you are exempt from the 80-hour per month community engagement requirement.';
+                details = 'Example: You and your husband stay home to take care of your 2 children and also your elderly parents. You could possibly claim the caregiver status and your husband would then have to meet the 80 hours of community engagement hours to keep coverage.';
                 measure['title'] = title;
                 measure['details'] = details;
                 return measure; 
@@ -622,10 +609,10 @@
             applicable_measures = [{title:'Your income does not meet income requirements for Medicaid.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else if(med_waiver > 0){
-            applicable_measures = [{title:'You do not have any changes to your Medicaid benefits.'}]
+            applicable_measures = [{title:'Nothing changes for you. You keep your same benefits, and are exempt from any changes.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else if(medicare > 0){
-            applicable_measures = [{title:'You do not have any changes to your Medicaid benefits.'}]
+            applicable_measures = [{title:'Nothing changes for you. You keep your same benefits, and are exempt from any changes.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else{
             var commengage_req = commEngage();
@@ -645,40 +632,8 @@
             applicable_measures.push(commengage_req);
             
             ractive.set('applicableMeasures', applicable_measures);
-            //makeAccordions();
           }
         };
-        
-        //var _listen = function(){
-        //  this.classList.toggle("active");
-        //  if(this.nextElementSibling){
-        //    var panel = this.nextElementSibling;
-        //    if (panel.style.maxHeight){
-        //      panel.style.maxHeight = null;
-        //    } else {
-        //      panel.style.maxHeight = panel.scrollHeight + "px";
-        //    } 
-        //  }
-        //}
-        //
-        //function makeAccordions(){
-        //  var acc = document.getElementsByClassName("accordion");
-        //  var i;
-        //            
-        //  for (i = 0; i < acc.length; i++) {
-        //    acc[i].removeEventListener("click", _listen, true);
-        //    acc[i].addEventListener("click", _listen, true);
-        //  }
-        //};
-        //
-        //
-        //var acc = document.getElementsByClassName("accordion");
-        //var i;
-        //          
-        //for (i = 0; i < acc.length; i++) {
-        //  acc[i].addEventListener("click", _listen, true);
-        //}
-
         
   	  }); //end $(document).ready
   			
