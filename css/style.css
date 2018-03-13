@@ -102,6 +102,11 @@ label.error{
   font-size: 1.25em;
 }
 
+.contact-box{
+  margin-top:4em;
+  font-style: italic;
+}
+
 /***********************
   Results Accordion
 ************************/
@@ -152,7 +157,7 @@ label.error{
 }
 
 #container{
-	margin-bottom: 5em;
+	margin-bottom: 2em;
 }
 
 .row{
@@ -183,7 +188,7 @@ label.error{
 /***********************
   Source
 ************************/
-#source, .notes{
+#source, .notes, #disclaimer{
   font-style: italic;
   font-size: .875em;
   color:#808080;
