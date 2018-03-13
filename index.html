@@ -7,6 +7,17 @@
 
   <meta charset='utf-8'>
   <title>Kentucky Medicaid Waiver Calculator</title>
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-32037403-5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'UA-32037403-5');
+  </script>
+
 </head>
 
 <body>
@@ -72,7 +83,6 @@
   		  <div class="one-half column">
   		  	<!--user inputs-->
   			  <form>
-    			  
     			  
     			  <div class="form-group">
   			  		<div class="form-head">
@@ -207,7 +217,10 @@
   
     <script>
     	$(document).ready(function() {
-
+        
+        //This helps us keep the new measures (.results) inline with the userInput options
+        //This is important because the new measures update automatically as the user inputs
+        //different values.
       	$(window).scroll(function(){
           var currentScreenPosition  = $(document).scrollTop();
           var appScreenPosition = $('#app-begin').offset().top;
@@ -238,14 +251,12 @@
           {id:'CH', name:'Chronically homeless'}
         ];
           
-        var applicable_measures = [];          
-        var general_list = [];
-        var cat2_list = [];
-        var cat3_list = [];
-        var cat4_list = [];
-        var filtered_list = [];
-                
+        var applicable_measures = [];
     		
+    		//Here's where we define our default userInput values and
+    		//set up our ractive template
+    		//IMPROVEMENT: consider why you're using numbers and not booleans
+    		//on a lot of these... code could be reduced here
   	    var ractive = new Ractive({
   	      el: 'container',	
   	      template: '#template',
@@ -271,21 +282,18 @@
   	      	waivers:med_waivers,
   	      	conditions:med_conditions,
             notes:'',
-			//formats
-			dollarFormat: function(num){
-				var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
-				var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-				return '$' + milNum;
-			}					
+      			dollarFormat: function(num){
+      				var deciNum = parseFloat(Math.round(num*100)/100).toFixed(0);
+      				var milNum = deciNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      				return '$' + milNum;
+      			}					
   	      },// end data
-  	      
   	    }); //end var ractive
     		
   	    
   	    // Watch for changes on the user inputs. When a change is detected, 
   	    // compile the applicable measures and calculate the poverty level if  
   	    // the input has to do with that calculation. 
-  	    
   	    ractive.observe('selectedMedWaiver', function(newValue, oldValue){
   				if(newValue != 'No'){
     				ractive.set('userInput.med_waiver', 1);
@@ -359,7 +367,7 @@
   	    });
   	    
   	    
-  	    //FPL 2018: https://aspe.hhs.gov/poverty-guidelines  	    
+  	    //FPL 2018: https://aspe.hhs.gov/poverty-guidelines
   	    function getPovertyLevel(household){
     	    if(household == 1) return 12140;
     	    if(household == 2) return 16460;
@@ -375,6 +383,13 @@
     	    if(household == 12) return 59660;
   	    }
   	    
+  	    //Poverty status takes the user's income and compares it to the 
+  	    //poverty level for their household size. There are three poverty status 
+  	    //buckets as it pertains to Medicaid:
+  	    //poverty54 = Your income is at or below 54% of the poverty level.
+  	    //poverty = Your income is at or below 100% of the poverty level.
+  	    //poverty138 = Your income is at or below 138% of the poverty level.
+  	    //If your income is above 138% FPL you do not qualify for Medicaid
   	    function setPovertyStatus(){
     	    var income = ractive.get('userInput.income');
     	    var household = ractive.get('userInput.household');
@@ -405,10 +420,22 @@
       	    ractive.set('userInput.poverty', 0);
           }
     	  }
-    	          
+    	  
+    	  //We've broken down the new measures into 7 categories:
+    	  //1) Community engagement requirement (commEngage)
+    	  //2) Premium requirement (premium)
+    	  //3) Lockout conditions (lockOut)
+    	  //4) Coverage start time (coverageStart)
+    	  //5) Retroactive eligibility (retroEl)
+    	  //6) My Rewards benefits (myRewards)
+    	  //7) Nonemergency medical transportation eligibility (nonEmerMedTrans)
+    	  //Measures are segmented into categories because within each category, there are measures
+    	  //that contradict each other.
         function compile_applicable_measures(){
           applicable_measures = [];
           
+          //First we grab all the variables that will determine the user's placement
+          //in those 7 categories
           medicare = ractive.get('userInput.medicare');
           med_waiver = ractive.get('userInput.med_waiver');
           med_frail = ractive.get('userInput.med_frail');
@@ -618,6 +645,7 @@
             }
           };
           
+          //Next, determine if anything will change for them pased on their poverty status
           if(poverty == 0 &&  poverty138 == 0){
             applicable_measures = [{title:'Your income does not meet income requirements for Medicaid.'}]
             ractive.set('applicableMeasures', applicable_measures);
@@ -628,6 +656,9 @@
             applicable_measures = [{title:'Nothing changes for you. You keep your same benefits, and are exempt from any changes.'}]
             ractive.set('applicableMeasures', applicable_measures);
           }else{
+            //If they're eligible for Medicaid (financially and in terms of medical waivers)
+            //we run the category funtions and add the results of those functions
+            //to a list called applicable_measures
             var commengage_req = commEngage();
             var premium_req = premium();
             var lockout_req = lockOut();

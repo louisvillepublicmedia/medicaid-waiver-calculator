@@ -1,19 +1,18 @@
 # About the Code
 
-This tax calculator is built using the [Ractive.js](http://ractivejs.org) javascript library and the [bootstrap theme](http://getbootstrap.com/). We wanted a user experience that would allow users to easily input and adjust the calculator parameters (marital status, income, property value, etc,) so that, in addition to exploring their own tax bill, they might also explore the tax bills of other Pennsylvanians.
-For an explanation on the data behind the code, [jump over here](https://github.com/akanik/pa-tax-calculator/blob/master/about-the-data.md).
+This tax calculator is built using the [Ractive.js](http://ractivejs.org) javascript library and the [skeleton responsive theme](http://getskeleton.com/). We wanted a user experience that would allow users to easily input and adjust the calculator parameters (household size, income, medical issues, etc,) so that, in addition to exploring their current Medicaid eligibility, they might also explore how Medicaid might change for them as their circumstances change.
 
 ## The code explained
 
-Basically, we are setting up a system where all changes made by the user are being watched. When something changes, the system notices and immediately adjusts the variables that calculate the tax bill.
+Basically, we are setting up a system where all changes made by the user are being watched. When something changes, the system notices and immediately adjusts the variables that calculate the new Medicaid measures.
 
-Here is a breakdown of what happens when each user-input element is changed and an explanation of the functions used to calculate the tax bill.
+Here is a breakdown of what happens when each user-input element is changed and an explanation of the functions used to calculate the new measures.
 
-### School District
+### Poverty
 
-School district information is stored in an object array. When a user chooses a school district from the select list, the index of the selected district is recorded so that the millage and homestead exemptions for plans can be identified and written to variables. Any time the school district is changed, those variables are updated.
+Poverty status and poverty levels are calculated using the user's household size and income. We used the Department of Health and Human Services (HHS) Poverty Guidelines for 2018 to measure poverty status.
 
-Also, property tax is dependent on school district, so when the school district changes, we run the function that determines property tax.
+
 
 ### Homeownership
 
