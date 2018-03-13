@@ -1,12 +1,10 @@
-# PA tax calculator
-PublicSource created this tax calculator for Allegheny County residents to estimate how your property taxes, income taxes and sales taxes might change under Gov. Tom Wolf's first proposed budget.
+# Kentucky Medicaid waiver calculator
+In July 2018, Kentucky will start an experiment with how some low-income residents get their health insurance. The project, known as Kentucky HEALTH, affects a portion of people who have Medicaid coverage.
 
-**Read about the** [**data here.**](https://github.com/akanik/pa-tax-calculator/blob/master/about-the-data.md)
+WFPL created this Medicaid waiver calculator to help people understand how their access to and eligibility for Medicaid in the state of Kentucky will change.
 
-**Read about the** [**code here.**](https://github.com/akanik/pa-tax-calculator/blob/master/about-the-code.md)
+**Read more about** [**Kentucky HEALTH here.**](http://wfpl.org/confused-about-upcoming-medicaid-changes-medicaid-calculator-can-help/)
 
-**View the Allegheny County** [**calculator here.**](http://54.173.122.255/taxcalc/index.html?)
+[**Use the app.**](http://local.wfpl.org/wfpl/medicaid-waiver-calculator/index.html)
 
-**Read the stories:**
-- [Comparing the House Republicans’ tax plan with Wolf’s](http://publicsource.org/investigations/tax-calculator-comparing-house-republicans-tax-plan-with-wolf-s#.VWp06WT4-2w)
-- [How Gov. Wolf's budget would affect you in Allegheny County](http://publicsource.org/investigations/tax-calculator-how-gov-wolfs-budget-would-affect-you-allegheny-county#.VSfaPpRPLek)
+**Read more** [**about the code here.**](https://github.com/louisvillepublicmedia/medicaid-waiver-calculator/blob/master/about-the-code.md)
